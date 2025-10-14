@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* Reset và Cài đặt chung */
+:root {
+    --success-bg: #e6f7f2;
+    --success-border: #00a86b;
+    --error-bg: #fff0f0;
+    --error-border: #d92d20;
+    --info-bg: #eef4ff;
+    --info-border: #2970ff;
+    --text-color: #333;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: Inter, sans-serif;
+}
