@@ -1,23 +1,14 @@
-import Lottie from "lottie-react"
 import RegisterImg from '../assets/animations/RegitserForm.json'
 import Text from "../components/Forms/Text"
 import Password from "../components/Forms/Password"
 import { Link } from "react-router-dom"
-import z from "zod"
+
 import React, { useState } from "react"
 import type { IRegitser } from "../types/user.type"
 import OverlayLoading from "../components/OverlayLoading"
 import AnimatedLottie from "../components/FrameMotion"
+import { RegisterSchema } from '../services/zod/user.service'
 
-const RegisterSchema = z.object({
-  email: z.email("Email không hợp lệ."),
-  username: z.string().min(1, "Username không được để trống."),
-  password: z.string().min(6, "Mật khẩu ít nhất 6 ký tự."),
-  passConfirm: z.string().min(6, "Mật khẩu xác nhận ít nhất 6 ký tự.")
-}).refine((data) => data.password === data.passConfirm, {
-  error: "Mật khẩu xác nhận không khớp",
-  path: ['passConfirm']
-})
 
 const RegitserPage = () => {
 
