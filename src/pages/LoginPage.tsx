@@ -1,20 +1,13 @@
-import Lottie from "lottie-react"
 import LoginImg from '../assets/animations/LoginForm.json'
 import Text from "../components/Forms/Text"
 import Password from "../components/Forms/Password"
 import Switch from "../components/Forms/Switch"
 import { Link } from "react-router-dom"
 import React, { useState } from "react"
-import type { ILogin, IRegitser } from "../types/user.type"
-import z from "zod"
+import type { ILogin } from "../types/user.type"
 import OverlayLoading from "../components/OverlayLoading"
 import AnimatedLottie from "../components/FrameMotion"
-
-const LoginSchema = z.object({
-  emailOrUsername: z.string().min(1, "Tài khoản đăng nhập không được để trống."),
-  password: z.string().min(1, "Mật khẩu không được để trống."),
-  remember: z.boolean()
-})
+import { LoginSchema } from '../services/zod/user.service'
 
 const LoginPage = () => {
 
@@ -78,7 +71,7 @@ const LoginPage = () => {
               <div className="self-center">
                 <Switch
                   name="remember"
-                  label="Ghi nhớ"
+                  label="Remember"
                 />
               </div>
               <div>
