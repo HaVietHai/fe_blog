@@ -26,3 +26,12 @@ export interface ILogin{
     password: string,
     remember?: boolean
 }
+
+export interface ISendMail{
+    email: string,
+    title?: string,
+}
+
+export interface OTPCodeRequestDto extends ISendMail{
+    randomCode: number;
+}

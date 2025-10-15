@@ -3,15 +3,14 @@ import SuccessAnimation from '../assets/animations/Success.json';
 import Text from "../components/Forms/Text"
 import Password from "../components/Forms/Password"
 import { Link, useNavigate } from "react-router-dom"
-import React, { useState, type FC } from "react"
+import React, { useState } from "react"
 import type { IRegitser } from "../types/user.type"
 import OverlayLoading from "../components/OverlayLoading"
-import AnimatedLottie from "../components/FrameMotion"
 import { RegisterSchema } from '../services/zod/user.service'
 import Lottie from 'lottie-react'
 import { handleRegister } from '../services/user.service'
 import errorHandler from '../utils/errorHandle'
-import { showNotification } from '../utils/helper'
+import { REGISTER_SUCCESS } from '../constants/message.constant';
 
 
 const RegitserPage:React.FC = () => {
@@ -107,7 +106,7 @@ const RegitserPage:React.FC = () => {
           <div className='flex fixed bg-gray-100 w-md h-75 z-50 top-50 bottom-50 rounded-md border-1 border-cyan-300'>
             <div className='flex flex-col absolute justify-center text-center'>
               <span className='ml-30 font-semibold text-xl text-cyan-400 mt-2'>
-                Đăng ký thành công
+                {REGISTER_SUCCESS}
               </span>
               <Lottie animationData={SuccessAnimation} loop={true} style={{ width: 200, height: 200, marginLeft: 120 }} />
               <button

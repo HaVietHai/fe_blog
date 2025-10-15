@@ -97,7 +97,7 @@ const LoginPage = () => {
               </div>
               <div>
                 <Link
-                  to={''}
+                  to={'/forgot-password'}
                   className="text-sm hover:text-gray-500"
                 >
                   Quên mật khẩu?
