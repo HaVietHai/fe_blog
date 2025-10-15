@@ -4,7 +4,7 @@ import type { AuthState } from "../types/user.type";
 import authReducer from './slices/auth.slice'
 
 
-const authItem = StorageService.getItem('auth');
+const authItem = StorageService.getItem('auth_blog');
 let initialState: AuthState = {
     current: null,
     isLoggedIn: false

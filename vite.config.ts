@@ -8,4 +8,21 @@ export default defineConfig({
     tailwindcss(),
     react(),
   ],
+  optimizeDeps: {
+    include: ["lucide-react"]
+  }
+  // server:{
+  //   proxy:{
+  //     '/api':{
+  //       target: 'http://192.168.1.10:3000',
+  //       changeOrigin: true,
+  //       secure: false // <- bỏ verify SSL self-signed
+  //     },
+  //     '/connect':{
+  //       target: 'http://192.168.1.10:3000',
+  //       changeOrigin: true,
+  //       secure: false // <- bỏ verify SSL self-signed
+  //     }
+  //   }
+  // }
 })

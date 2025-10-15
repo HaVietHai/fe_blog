@@ -4,22 +4,28 @@ import Password from "../components/Forms/Password"
 import Switch from "../components/Forms/Switch"
 import { Link } from "react-router-dom"
 import React, { useState } from "react"
-import type { ILogin } from "../types/user.type"
+import type { ILogin, IUser } from "../types/user.type"
 import OverlayLoading from "../components/OverlayLoading"
 import AnimatedLottie from "../components/FrameMotion"
 import { LoginSchema } from '../services/zod/user.service'
+import * as userService from '../services/user.service';
+import { login } from '../redux/slices/auth.slice'
+import { useDispatch } from 'react-redux'
+import errorHandler from '../utils/errorHandle'
+import { showNotification } from '../utils/helper'
+import Lottie from 'lottie-react'
 
 const LoginPage = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isRemember, setIsRemember] = useState<boolean>(false);
   const [erros, setErrors] = useState<Record<string, string>>({})
   const [loginFormDto, setLoginFormDto] = useState<ILogin>({
     emailOrUsername: '',
     password: '',
     remember: false
   })
-
+  const dispatch = useDispatch();
+  
   const handleValidate = (): boolean => {
     const validate = LoginSchema.safeParse(loginFormDto);
 
@@ -43,15 +49,28 @@ const LoginPage = () => {
     }))
   }
 
-  const handleSubmit = (e: React.ChangeEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (e: React.ChangeEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     if (!handleValidate()) return;
 
+    setErrors({});
     try {
       setIsLoading(true);
+      await userService.handleLogin(loginFormDto)
+      const user: IUser = {
+        email: loginFormDto.emailOrUsername,
+        username: loginFormDto.emailOrUsername,
+      }
+      console.log("Dau duoc luu vao: ", user);
+
+
+      dispatch(login(user));
+      window.location.href = '/'
+      showNotification({ type: 'success', duration: 3000, message: "Đăng nhập thành công." })
     } catch (error: any) {
-      console.log(error.message);
+      console.log("loi:", error.message);
+      errorHandler(error)
     } finally {
       setIsLoading(false);
     }
@@ -64,14 +83,16 @@ const LoginPage = () => {
           <div className="flex-1 p-4">
             <h1 className="text-2xl font-semibold">Đăng nhập</h1>
             <form className="mt-5 space-y-2">
-              <Text error={erros.emailOrUsername} name="emailOrUsername" label="Email / Tên đăng nhập" icon="User" onChange={handleChangeForm} />
-              <Password error={erros.password} name="password" label="Mật khẩu" onChange={handleChangeForm} />
+              <Text placeholder='Hòm thư / Tên đăng nhập' value={loginFormDto.emailOrUsername} error={erros.emailOrUsername} name="emailOrUsername" label="Email / Username" icon="User" onChange={handleChangeForm} />
+              <Password placeholder='Mật khẩu' value={loginFormDto.password} error={erros.password} name="password" label="Password" onChange={handleChangeForm} />
             </form>
             <div className="flex flex-row mt-6 justify-between">
               <div className="self-center">
                 <Switch
+                  checked={loginFormDto.remember}
                   name="remember"
                   label="Remember"
+                  onChange={handleChangeForm}
                 />
               </div>
               <div>
@@ -97,7 +118,9 @@ const LoginPage = () => {
 
             </div>
           </div>
-          <AnimatedLottie animationData={LoginImg} direction="right" />
+          <div className="border-2 border-cyan-200 rounded-md flex justify-center items-center">
+            <Lottie animationData={LoginImg} loop={true} style={{ width: 400, height: 400 }} />
+          </div>
         </div>
         <OverlayLoading show={isLoading} />
       </div>

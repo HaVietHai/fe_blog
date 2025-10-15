@@ -1,12 +1,13 @@
 import z from "zod";
+import { ErrorCode, getErrorMessage } from "../../constants/errors.constant";
 
 export const RegisterSchema = z.object({
-  email: z.email("Email không hợp lệ."),
-  username: z.string().min(1, "Username không được để trống."),
-  password: z.string().min(6, "Mật khẩu ít nhất 6 ký tự."),
-  passConfirm: z.string().min(6, "Mật khẩu xác nhận ít nhất 6 ký tự.")
+  email: z.email(getErrorMessage(ErrorCode.MAIL_IS_REQUIRED)),
+  username: z.string().min(1, getErrorMessage(ErrorCode.USERNAME_IS_REQUIRED)),
+  password: z.string().min(6, getErrorMessage(ErrorCode.PASSWORD_IS_REQUIRED)),
+  passConfirm: z.string().min(6, getErrorMessage(ErrorCode.PASSCONFIRM_ISREQUIRED))
 }).refine((data) => data.password === data.passConfirm, {
-  error: "Mật khẩu xác nhận không khớp",
+  error: getErrorMessage(ErrorCode.MATCHED_WITH_PASSWORD),
   path: ['passConfirm']
 })
 
