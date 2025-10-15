@@ -1,17 +1,22 @@
 import RegisterImg from '../assets/animations/RegitserForm.json'
+import SuccessAnimation from '../assets/animations/Success.json';
 import Text from "../components/Forms/Text"
 import Password from "../components/Forms/Password"
-import { Link } from "react-router-dom"
-
-import React, { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import React, { useState, type FC } from "react"
 import type { IRegitser } from "../types/user.type"
 import OverlayLoading from "../components/OverlayLoading"
 import AnimatedLottie from "../components/FrameMotion"
 import { RegisterSchema } from '../services/zod/user.service'
+import Lottie from 'lottie-react'
+import { handleRegister } from '../services/user.service'
+import errorHandler from '../utils/errorHandle'
+import { showNotification } from '../utils/helper'
 
 
-const RegitserPage = () => {
+const RegitserPage:React.FC = () => {
 
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [regitserFormDto, setRegisterFormDto] = useState<IRegitser>({
@@ -20,6 +25,7 @@ const RegitserPage = () => {
     password: '',
     passConfirm: ''
   });
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const handleValidate = (): boolean => {
     const validate = RegisterSchema.safeParse(regitserFormDto);
@@ -44,16 +50,17 @@ const RegitserPage = () => {
     }))
   }
 
-  const handleSubmit = (event: React.ChangeEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (event: React.ChangeEvent<HTMLButtonElement>): Promise<void> => {
     event.preventDefault();
 
     if (!handleValidate()) return;
-
+    setErrors({});
     try {
       setIsLoading(true);
-      setErrors({})
+      await handleRegister(regitserFormDto);
+      setShowModal(true);
     } catch (error: any) {
-      console.log(error.message);
+      errorHandler(error)
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +70,9 @@ const RegitserPage = () => {
     <div className="h-full max-w-full flex flex-1 bg-gradient-to-br justify-center items-center from-blue-500 to-cyan-300 p-4">
       <div className="relative max-w-5xl h-auto w-full p-8 md:p-12 bg-white shadow-2xl rounded-xl">
         <div className="flex flex-row">
-          <AnimatedLottie animationData={RegisterImg} direction="left" />
+          <div className="border-2 border-cyan-200 rounded-md flex justify-center items-center md:p-1">
+            <Lottie animationData={RegisterImg} loop={true} style={{ width: 350, height: 500 }} />
+          </div>
           <div className="flex-1 w-max ml-4">
             <h1 className="font-semibold text-2xl">Đăng ký</h1>
             <form className="mt-3 space-y-2">
@@ -73,11 +82,13 @@ const RegitserPage = () => {
               <Password error={errors.passConfirm} value={regitserFormDto.passConfirm} onChange={handleChangeForm} name="passConfirm" label="Password Confirm" />
             </form>
             <button
-              className="w-full bg-green-300 mt-5 py-2 px-3 rounded-md hover:bg-green-700"
+              disabled={isLoading}
+              className={`${isLoading ? "bg-gray-200": "bg-green-300 hover:bg-green-700"} w-full flex flex-row justify-center mt-5 py-2 px-3 rounded-md`}
               type="submit"
               onClick={handleSubmit}
             >
-              <span className="text-sm font-semibold text-white">Đăng ký</span>
+              <OverlayLoading show={isLoading} />
+              <span className="text-sm font-semibold text-white mt-1">Đăng ký</span>
             </button>
             <div className="mt-4 justify-center text-center">
               <span className="text-sm mt-4">Bạn đã có tài khoản? Trở lại <Link to={'/login'} className="font-semibold hover:text-cyan-500">Đăng nhập</Link></span>
@@ -90,8 +101,27 @@ const RegitserPage = () => {
             </div>
           </div>
         </div>
-        <OverlayLoading show={isLoading} />
       </div>
+      {showModal && showModal ?
+        (
+          <div className='flex fixed bg-gray-100 w-md h-75 z-50 top-50 bottom-50 rounded-md border-1 border-cyan-300'>
+            <div className='flex flex-col absolute justify-center text-center'>
+              <span className='ml-30 font-semibold text-xl text-cyan-400 mt-2'>
+                Đăng ký thành công
+              </span>
+              <Lottie animationData={SuccessAnimation} loop={true} style={{ width: 200, height: 200, marginLeft: 120 }} />
+              <button
+                type='button'
+                className='w-full hover:cursor-pointer bg-blue-300 hover:bg-cyan-600 hover:border-1 hover:border-white ml-15 px-4 py-3 mt-1 rounded-md'
+                onClick={() => navigate('/login')}
+              >
+                <span className='text-sm font-bold text-white'>Quay lại Đăng nhập</span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div></div>
+        )}
     </div>
   )
 }

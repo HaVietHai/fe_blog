@@ -1,21 +1,121 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* Vùng chứa thông báo */
+#notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 320px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+/* Kiểu thông báo chung */
+.notification {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    display: flex;
+    align-items: flex-start;
+    padding: 16px;
+    border-left: 5px solid;
+    animation: slideIn 0.3s ease-out, fadeOut 0.5s ease-in forwards;
+    animation-delay: 0s, 4.5s; /* Bắt đầu fadeOut sau 4.5s */
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+.notification-icon {
+    flex-shrink: 0;
+    margin-right: 12px;
+    width: 24px;
+    height: 24px;
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+
+.notification-content {
+    flex-grow: 1;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text-color);
+    margin-right: 12px;
+}
+
+.notification-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+    padding: 0;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.notification-close:hover {
+    opacity: 1;
+}
+
+/* Biến thể loại thông báo */
+.notification.success {
+    background-color: var(--success-bg);
+    border-color: var(--success-border);
+}
+
+.notification.success .notification-icon {
+    color: var(--success-border);
+}
+
+.notification.error {
+    background-color: var(--error-bg);
+    border-color: var(--error-border);
+}
+
+.notification.error .notification-icon {
+    color: var(--error-border);
+}
+
+.notification.info {
+    background-color: var(--info-bg);
+    border-color: var(--info-border);
+}
+
+.notification.info .notification-icon {
+    color: var(--info-border);
+}
+
+.overlay-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: all;
+}
+/* Hoạt ảnh */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
 }
 
 @keyframes logo-spin {
@@ -39,4 +139,12 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.animate-slideIn {
+    animation: slideIn 0.3s ease-out forwards;
+}
+
+.animate-fadeOut {
+    animation: fadeOut 0.3s ease-in forwards;
 }
