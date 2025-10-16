@@ -2,6 +2,7 @@ import type { AxiosInstance } from "axios";
 import axios from "axios";
 import { StorageService } from "../services/storage.service";
 import type { LoginDtoResponse } from "../types/user.type";
+import { STORAGE_KEY_AUTH_BLOG } from "../constants/key.constant";
 
 const client:AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL,
@@ -23,7 +24,7 @@ const onRefreshed = (token: string) => {
 
 client.interceptors.request.use(
     (config) =>{
-        const auth = StorageService.getItem('auth_blog');
+        const auth = StorageService.getItem(STORAGE_KEY_AUTH_BLOG);
         if (auth && config.headers) {
             config.headers.Authorization = `Bearer ${auth.access_token}`;
         }
@@ -49,9 +50,9 @@ client.interceptors.response.use(
                 }
             }
             isRefreshing = true;
-            const auth: LoginDtoResponse = StorageService.getItem('auth_blog');
+            const auth: LoginDtoResponse = StorageService.getItem(STORAGE_KEY_AUTH_BLOG);
             if (!auth?.refresh_token) {
-                StorageService.clearItem('auth_blog');
+                StorageService.clearItem(STORAGE_KEY_AUTH_BLOG);
                 window.location.href = '/login';
                 return Promise.reject(error);
             }
@@ -64,14 +65,14 @@ client.interceptors.response.use(
                     params,
                     {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}
                 );
-                StorageService.setItem('auth', result);
+                StorageService.setItem(STORAGE_KEY_AUTH_BLOG, result);
                 isRefreshing = false;
                 onRefreshed(result.data.access_token);
                 originalRequest.headers['Authorization'] = 'Bearer' + result.data.access_token;
                 return client(originalRequest);
             } catch (error) {
                 isRefreshing = false
-                StorageService.clearItem('auth_blog');
+                StorageService.clearItem(STORAGE_KEY_AUTH_BLOG);
                 window.location.href = '/login';
                 return Promise.reject(error)
             }

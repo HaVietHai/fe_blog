@@ -16,3 +16,7 @@ export const LoginSchema = z.object({
   password: z.string().min(1, "Mật khẩu không được để trống."),
   remember: z.boolean()
 })
+
+export const OTPSchema = z.object({
+    email: z.email(getErrorMessage(ErrorCode.MAIL_IS_REQUIRED))
+})

@@ -1,19 +1,14 @@
 import type React from "react"
 import { useNavigate } from "react-router-dom"
-import { IconLucide } from "../../components/IconLucide";
-import z from "zod";
-import { ErrorCode, getErrorMessage } from "../../constants/errors.constant";
 import { useState } from "react";
 import type { ISendMail } from "../../types/user.type";
 import errorHandler from "../../utils/errorHandle";
-import OverlayLoading from "../../components/OverlayLoading";
-import Text from "../../components/Forms/Text";
 import InforInput from "./Form/InforInput";
 import OTPInput from "./Form/OTPInput";
+import { OTPSchema } from "../../services/zod/user.service";
+import { handleSendOtp } from "../../services/user.service";
+import { showNotification } from "../../utils/helper";
 
-const OTPSchema = z.object({
-    email: z.email(getErrorMessage(ErrorCode.MAIL_IS_REQUIRED))
-})
 
 const ForgetPage: React.FC = () => {
 
@@ -49,16 +44,23 @@ const ForgetPage: React.FC = () => {
         }))
     }
 
-    const handleSendMail = (event: React.ChangeEvent<HTMLButtonElement>) => {
+    const handleSendMail = async(event: React.ChangeEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
         if (!handleValidate()) return;
 
         try {
             setIsLoading(true);
+            const infor:ISendMail = {
+                email: forgetPassForm.email,
+                title: "Mã xác thực (Do quên mật khẩu)."
+            }
+            await handleSendOtp(infor);
             setError({})
             setViewOtp(2);
-        } catch (error) {
+            showNotification({type: 'success', duration: 3000, message: `Đã gửi mã xác nhận về: ${forgetPassForm.email}`});
+        } catch (error: any) {
+            console.log("Loi nay",error.response.data);
             errorHandler(error);
         } finally {
             setIsLoading(false)
@@ -78,7 +80,7 @@ const ForgetPage: React.FC = () => {
                     />
                 )}
                 {viewOtp == 2 && (
-                    <OTPInput />
+                    <OTPInput title="Nhập mã xác thực" email={forgetPassForm.email} onSendOtp={handleSendMail}/>
                 )}
             </div>
         </div>

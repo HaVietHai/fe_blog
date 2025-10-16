@@ -28,14 +28,13 @@ const errorHandler = (error: any) => {
     }
 
     // Bắt lỗi cụ thể theo status code
-    if (response.status === 400) {
-        console.log("Da nhay vao loi 400");
-        
+    if (response.status === 400) {        
         const apiMessage =
             response.data?.message ||
             response.data?.error?.message ||
+            response.data ||
             'Yêu cầu không hợp lệ.';
-        console.log("Loi la:", apiMessage);
+        console.log("Lỗi là:", apiMessage);
             
         showErrorNotification(apiMessage);
         return;
