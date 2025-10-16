@@ -6,7 +6,6 @@ import { Link } from "react-router-dom"
 import React, { useState } from "react"
 import type { ILogin, IUser } from "../types/user.type"
 import OverlayLoading from "../components/OverlayLoading"
-import AnimatedLottie from "../components/FrameMotion"
 import { LoginSchema } from '../services/zod/user.service'
 import * as userService from '../services/user.service';
 import { login } from '../redux/slices/auth.slice'
@@ -25,7 +24,7 @@ const LoginPage = () => {
     remember: false
   })
   const dispatch = useDispatch();
-  
+
   const handleValidate = (): boolean => {
     const validate = LoginSchema.safeParse(loginFormDto);
 
@@ -62,14 +61,12 @@ const LoginPage = () => {
         email: loginFormDto.emailOrUsername,
         username: loginFormDto.emailOrUsername,
       }
-      console.log("Dau duoc luu vao: ", user);
-
 
       dispatch(login(user));
       window.location.href = '/'
       showNotification({ type: 'success', duration: 3000, message: "Đăng nhập thành công." })
     } catch (error: any) {
-      console.log("loi:", error.message);
+      console.log("loi:", error.response.data.message);
       errorHandler(error)
     } finally {
       setIsLoading(false);
@@ -83,7 +80,7 @@ const LoginPage = () => {
           <div className="flex-1 p-4">
             <h1 className="text-2xl font-semibold">Đăng nhập</h1>
             <form className="mt-5 space-y-2">
-              <Text placeholder='Hòm thư / Tên đăng nhập' value={loginFormDto.emailOrUsername} error={erros.emailOrUsername} name="emailOrUsername" label="Email / Username" icon="User" onChange={handleChangeForm} />
+              <Text type='text' placeholder='Hòm thư / Tên đăng nhập' value={loginFormDto.emailOrUsername} error={erros.emailOrUsername} name="emailOrUsername" label="Email / Username" icon="User" onChange={handleChangeForm} />
               <Password placeholder='Mật khẩu' value={loginFormDto.password} error={erros.password} name="password" label="Password" onChange={handleChangeForm} />
             </form>
             <div className="flex flex-row mt-6 justify-between">
@@ -105,15 +102,16 @@ const LoginPage = () => {
               </div>
             </div>
             <button
-              className="w-full bg-cyan-300 rounded-md py-2 px-3 mt-5 hover:cursor-pointer hover:bg-cyan-700"
+              className={`${isLoading ? "hover:cursor-not-allowed hover:bg-gray-400 bg-gray-400" : "bg-cyan-300 hover:cursor-pointer hover:bg-cyan-700"} w-full  flex flex-row justify-center rounded-md py-2 px-3 mt-5 `}
               type="submit"
               onClick={handleSubmit}
             >
-              <span className="text-sm font-semibold text-white">Đăng nhập</span>
+              <OverlayLoading show={isLoading}/>
+              <span className="text-sm font-semibold text-white mt-1 ml-1">Đăng nhập</span>
             </button>
             <div className="mt-3">
               <span className="text-sm">
-                Bạn chưa có tài khoản? Đến trang <Link to={'/regitser'} className="font-semibold hover:text-green-400">Đăng ký</Link>
+                Bạn chưa có tài khoản? Đến trang <Link to={'/register'} className="font-semibold hover:text-green-400">Đăng ký</Link>
               </span>
 
             </div>
@@ -122,7 +120,6 @@ const LoginPage = () => {
             <Lottie animationData={LoginImg} loop={true} style={{ width: 400, height: 400 }} />
           </div>
         </div>
-        <OverlayLoading show={isLoading} />
       </div>
     </div>
   )

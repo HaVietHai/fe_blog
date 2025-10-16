@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Text  from "./Text";
 import type { IconName } from '../../config/type';
 
@@ -14,6 +14,10 @@ interface PasswordPros {
 
 const Password: React.FC<PasswordPros> = ({ value, onChange, placeholder, name, label ,error, required = false}) => {
     let icon: IconName = "Lock";
+    const [show, setShow] = useState<boolean>(false);
+    const handleShowPass = () =>{
+        setShow(!show);
+    }
     return (
         <Text
             label={label}
@@ -22,9 +26,11 @@ const Password: React.FC<PasswordPros> = ({ value, onChange, placeholder, name, 
             value={value}
             onChange={onChange}
             icon={icon}
-            type="password"
+            type={show ? "text" : "password"}
             error={error}
             required={required}
+            iconRight={show ? "Eye" : "EyeClosed"}
+            onShowPass={handleShowPass}
         />
     );
 };

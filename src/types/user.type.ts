@@ -33,5 +33,10 @@ export interface ISendMail{
 }
 
 export interface OTPCodeRequestDto extends ISendMail{
-    randomCode: number;
+    success?: boolean
+    randomCode: string;
+}
+
+export interface OtpState{
+    verified: boolean,
 }

@@ -75,14 +75,14 @@ const RegitserPage:React.FC = () => {
           <div className="flex-1 w-max ml-4">
             <h1 className="font-semibold text-2xl">Đăng ký</h1>
             <form className="mt-3 space-y-2">
-              <Text error={errors.email} value={regitserFormDto.email} onChange={handleChangeForm} name="email" label="Email" icon="Mail" />
-              <Text error={errors.username} value={regitserFormDto.username} onChange={handleChangeForm} name="username" label="Username" icon="User" />
+              <Text type='email' error={errors.email} value={regitserFormDto.email} onChange={handleChangeForm} name="email" label="Email" icon="Mail" />
+              <Text type='text' error={errors.username} value={regitserFormDto.username} onChange={handleChangeForm} name="username" label="Username" icon="User" />
               <Password error={errors.password} value={regitserFormDto.password} onChange={handleChangeForm} name="password" label="Password" />
               <Password error={errors.passConfirm} value={regitserFormDto.passConfirm} onChange={handleChangeForm} name="passConfirm" label="Password Confirm" />
             </form>
             <button
-              disabled={isLoading}
-              className={`${isLoading ? "bg-gray-200": "bg-green-300 hover:bg-green-700"} w-full flex flex-row justify-center mt-5 py-2 px-3 rounded-md`}
+              disabled={showModal}
+              className={`${showModal ? "bg-gray-200": "bg-green-300 hover:bg-green-700"} w-full flex flex-row justify-center mt-5 py-2 px-3 rounded-md`}
               type="submit"
               onClick={handleSubmit}
             >
