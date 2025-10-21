@@ -105,7 +105,7 @@ const OTPInput: React.FC<IPops> = ({
 
   return (
     <div className="flex flex-col space-y-3">
-      <h1 className="text-2xl font-semibold text-center text-gray-700">{title}</h1>
+      <h1 className="effect-text-h">{title}</h1>
       <h4 className="text-sm font-semibold text-gray-400 text-center">Mã OTP</h4>
       <div className="flex justify-center">
         {otp.map((val, index) => (
@@ -117,7 +117,7 @@ const OTPInput: React.FC<IPops> = ({
             onChange={(e) => handleOnChange(e.target.value, index)}
             ref={(el) => { inputRefs.current[index] = el }}
             inputMode="numeric"
-            className="h-14 w-15 text-center text-5xl rounded-md border border-gray-300 m-3 focus:ring-1 focus:ring-cyan-600 "
+            className="h-14 w-15 text-center text-[var(--color-brand-dark)] text-5xl rounded-md border border-gray-300 m-3 focus:ring-1 focus:ring-cyan-600 "
           />
         ))}
       </div>

@@ -74,11 +74,11 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="h-full max-w-full flex justify-center items-center bg-gradient-to-br from-blue-500 to-cyan-300 p-4">
+    <div className="v-background-web max-w-full flex justify-center items-center p-4">
       <div className="relative max-w-5xl h-auto w-full p-8 md:p-12 bg-white shadow-2xl rounded-xl">
         <div className="flex flex-row">
           <div className="flex-1 p-4">
-            <h1 className="text-2xl font-semibold">Đăng nhập</h1>
+            <h1 className="effect-text-h">Đăng nhập</h1>
             <form className="mt-5 space-y-2">
               <Text type='text' placeholder='Hòm thư / Tên đăng nhập' value={loginFormDto.emailOrUsername} error={erros.emailOrUsername} name="emailOrUsername" label="Email / Username" icon="User" onChange={handleChangeForm} />
               <Password placeholder='Mật khẩu' value={loginFormDto.password} error={erros.password} name="password" label="Password" onChange={handleChangeForm} />
@@ -95,7 +95,7 @@ const LoginPage = () => {
               <div>
                 <Link
                   to={'/forgot-password'}
-                  className="text-sm hover:text-gray-500"
+                  className="text-sm hover:text-gray-500 text-[var(--color-brand-light)]"
                 >
                   Quên mật khẩu?
                 </Link>
@@ -110,7 +110,7 @@ const LoginPage = () => {
               <span className="text-sm font-semibold text-white mt-1 ml-1">Đăng nhập</span>
             </button>
             <div className="mt-3">
-              <span className="text-sm">
+              <span className="text-sm text-black">
                 Bạn chưa có tài khoản? Đến trang <Link to={'/register'} className="font-semibold hover:text-green-400">Đăng ký</Link>
               </span>
 

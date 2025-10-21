@@ -21,7 +21,7 @@ const InforInput:React.FC<IProps> = ({
 
     return (
         <div className="flex flex-col">
-            <h1 className="text-xl font-semibold text-gray-600">Khôi phục mật khẩu</h1>
+            <h1 className="effect-text-h">Khôi phục mật khẩu</h1>
             <form className="flex-1 mt-4 mb-3">
                 <Text type="email" name="email" label="Email" placeholder="Nhập hòm thư" onChange={handleChangeForm} value={otpForm.email} error={error.email} />
             </form>

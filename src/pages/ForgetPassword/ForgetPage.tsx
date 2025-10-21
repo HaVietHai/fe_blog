@@ -68,7 +68,7 @@ const ForgetPage: React.FC = () => {
     }
 
     return (
-        <div className="h-full max-w-full flex justify-center items-center bg-gradient-to-br from-blue-500 to-cyan-300 p-4">
+        <div className="v-background-web max-w-full flex justify-center items-center p-4">
             <div className="relative max-w-5xl w-150 h-auto bg-white md:p-6 p-12 shadow-2xl rounded-xl">
                 {viewOtp == 1 && (
                     <InforInput

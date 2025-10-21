@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  /* 🎨 Bảng màu chính */
+  --color-brand-blue: #3B82F6;
+  --color-brand-cyan: #67E8F9;
+  --color-brand-dark: #0F172A;
+  --color-brand-light: #28354b;
+
+  /* 🌈 Text & Border */
+  --color-text-main: #F8FAFC;
+  --color-text-secondary: #CBD5E1;
+  --color-border-soft: #334155;
+
+  /* ✨ Hiệu ứng */
+  --shadow-glow: 0 0 10px rgba(56, 189, 248, 0.4);
+  --radius-card: 1.25rem;
+
+  /* 🎨 Gradient */
+  --gradient-brand: linear-gradient(to right, var(--color-brand-blue), var(--color-brand-cyan));
+  --gradient-hover: linear-grandient(to right, var(--color-brand-cyan), var(--color-brand-light));
+
+
+  /* Chuyển động */
+  --animation-float: float 3s ease-in-out infinite;
+}
+
+@layer utilities{
+  .effect-text-h{
+  background-image: linear-gradient(45deg, #005c97, #363795, #00d4ff, #f0f8ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  font-weight: bold;
+  font-size: 2rem;
+}
+
+ .v-background-web {
+  background-color: #0d1117; /* Nền đen sâu */
+  background-image: linear-gradient(135deg,
+    rgba(0, 212, 255, 0.5) 0%,   /* Cyan rõ hơn ở góc trên trái */
+    rgba(155, 89, 182, 0.25) 35%, /* Thêm chút màu tím để tăng nhận diện */
+    rgba(13, 17, 23, 0) 50%,    /* Chuyển về nền đen ở giữa */
+    rgba(77, 208, 225, 0.5) 100% /* Cyan rõ hơn ở góc dưới phải */
+  );
+  min-height: 100vh; /* Đảm bảo nền chiếm toàn bộ màn hình */
+  }
+
+     /* Lớp tiện ích để ẩn thanh cuộn */
+  .no-scrollbar::-webkit-scrollbar {
+      display: none;
+  }
+  .no-scrollbar {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+
+}
+
+@utility gradient-text {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+

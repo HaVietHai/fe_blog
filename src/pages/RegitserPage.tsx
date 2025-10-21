@@ -66,14 +66,14 @@ const RegitserPage:React.FC = () => {
   }
 
   return (
-    <div className="h-full max-w-full flex flex-1 bg-gradient-to-br justify-center items-center from-blue-500 to-cyan-300 p-4">
+    <div className="v-background-web max-w-full flex flex-1 bg-gradient-to-br justify-center items-center p-4">
       <div className="relative max-w-5xl h-auto w-full p-8 md:p-12 bg-white shadow-2xl rounded-xl">
         <div className="flex flex-row">
           <div className="border-2 border-cyan-200 rounded-md flex justify-center items-center md:p-1">
             <Lottie animationData={RegisterImg} loop={true} style={{ width: 350, height: 500 }} />
           </div>
           <div className="flex-1 w-max ml-4">
-            <h1 className="font-semibold text-2xl">Đăng ký</h1>
+            <h1 className="effect-text-h">Đăng ký</h1>
             <form className="mt-3 space-y-2">
               <Text type='email' error={errors.email} value={regitserFormDto.email} onChange={handleChangeForm} name="email" label="Email" icon="Mail" />
               <Text type='text' error={errors.username} value={regitserFormDto.username} onChange={handleChangeForm} name="username" label="Username" icon="User" />
@@ -90,12 +90,12 @@ const RegitserPage:React.FC = () => {
               <span className="text-sm font-semibold text-white mt-1">Đăng ký</span>
             </button>
             <div className="mt-4 justify-center text-center">
-              <span className="text-sm mt-4">Bạn đã có tài khoản? Trở lại <Link to={'/login'} className="font-semibold hover:text-cyan-500">Đăng nhập</Link></span>
+              <span className="text-sm mt-4 text-black">Bạn đã có tài khoản? Trở lại <Link to={'/login'} className="font-semibold hover:text-cyan-400">Đăng nhập</Link></span>
             </div>
             <div className="text-center mt-10">
-              <span className="text-sm">
-                Chính sách <Link to={''} className="hover:text-gray-300">Dịch vụ </Link>
-                & <Link to={''} className="hover:text-gray-300">Điều khoản</Link>
+              <span className="text-sm text-black">
+                Chính sách <Link to={''} className="hover:text-[var(--color-brand-cyan)]">Dịch vụ </Link>
+                & <Link to={''} className="hover:text-[var(--color-brand-cyan)]">Điều khoản</Link>
               </span>
             </div>
           </div>
