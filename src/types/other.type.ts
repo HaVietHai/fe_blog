@@ -5,3 +5,7 @@ export interface MenuItem{
     to: string;
     icon: IconName;
 }
+
+export interface HAVE_TROUBLE{
+    message: string;
+}

@@ -1,112 +1,90 @@
-import React from 'react';
+import React from "react";
 
 type PostImageGridProps = {
-  images: string[]; // Mảng chứa các URL của ảnh
+  images: string[];
 };
 
-// Component con để hiển thị ảnh, giúp tái sử dụng code
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 const ImageItem = ({ src }: { src: string }) => (
   <img
     src={src}
-    alt="post content"
-    className="w-full h-full object-cover rounded-md"
+    alt="post"
+    className="w-full h-full object-cover "
   />
 );
 
-// Component con cho ảnh cuối cùng có overlay
 const LastImageItem = ({ src, count }: { src: string; count: number }) => (
   <div className="relative w-full h-full">
-    <img
-      src={src}
-      alt="post content"
-      className="w-full h-full object-cover rounded-md"
-    />
+    <img src={src} alt="post" className="w-full h-full object-cover" />
     {count > 0 && (
-      <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-md">
-        <span className="text-white text-3xl font-bold">+{count}</span>
+      <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+        <span className="text-white text-2xl font-bold">+{count}</span>
       </div>
     )}
   </div>
 );
 
 const ImageGrid: React.FC<PostImageGridProps> = ({ images }) => {
+  if (!images?.length) return null;
   const count = images.length;
+  const hiddenCount = count - 5;
 
-  if (count === 0) {
-    return null; // Không có ảnh thì không render gì cả
-  }
+  // Giới hạn 5 ảnh hiển thị
+  const imgs = images.slice(0, 5).map((img) => `${BASE_URL}${img}`);
 
-  // --- 1 Ảnh ---
-  if (count === 1) {
-    return (
-      <div className="mt-2 w-full aspect-video">
-        <ImageItem src={images[0]} />
-      </div>
-    );
-  }
+  // Wrapper để ảnh không quá to (như Facebook)
+  const gridBaseClass = "mt-2 w-full rounded-lg overflow-hidden bg-gray-50";
 
-  // --- 2 Ảnh ---
-  if (count === 2) {
-    return (
-      <div className="mt-2 w-full grid grid-cols-2 gap-1 aspect-video">
-        <ImageItem src={images[0]} />
-        <ImageItem src={images[1]} />
-      </div>
-    );
-  }
+  // Chiều cao ảnh cố định: tỉ lệ 16:9 hoặc gần vuông tuỳ số lượng
+  const aspectClass =
+    count === 1 ? "aspect-video" : count === 2 ? "aspect-[4/3]" : "aspect-[1/1]";
 
-  // --- 3 Ảnh ---
-  if (count === 3) {
-    return (
-      <div className="mt-2 w-full grid grid-cols-2 grid-rows-2 gap-1 aspect-video">
-        {/* Ảnh 1 bên trái, chiếm 2 hàng */}
-        <div className="row-span-2">
-          <ImageItem src={images[0]} />
+  return (
+    <div className={`${gridBaseClass} ${aspectClass}`}>
+      {count === 1 && <ImageItem src={imgs[0]} />}
+
+      {count === 2 && (
+        <div className="grid grid-cols-2 gap-1 h-full">
+          {imgs.map((src, i) => (
+            <ImageItem key={i} src={src} />
+          ))}
         </div>
-        {/* 2 Ảnh nhỏ bên phải */}
-        <ImageItem src={images[1]} />
-        <ImageItem src={images[2]} />
-      </div>
-    );
-  }
+      )}
 
-  // --- 4 Ảnh ---
-  if (count === 4) {
-    return (
-      <div className="mt-2 w-full grid grid-cols-2 grid-rows-2 gap-1 aspect-video">
-        <ImageItem src={images[0]} />
-        <ImageItem src={images[1]} />
-        <ImageItem src={images[2]} />
-        <ImageItem src={images[3]} />
-      </div>
-    );
-  }
-
-  // --- 5 Ảnh hoặc nhiều hơn ---
-  // Hiển thị 5 ảnh (2 trên, 3 dưới), ảnh thứ 5 có overlay
-  if (count >= 5) {
-    const imagesToShow = images.slice(0, 5);
-    const hiddenCount = images.length - 5; // Số ảnh bị ẩn
-
-    return (
-      <div className="mt-2 w-full flex flex-col gap-1 aspect-video">
-        {/* 2 ảnh hàng trên */}
-        <div className="grid grid-cols-2 gap-1 flex-1">
-          <ImageItem src={imagesToShow[0]} />
-          <ImageItem src={imagesToShow[1]} />
+      {count === 3 && (
+        <div className="grid grid-cols-2 grid-rows-2 gap-1 h-full">
+          <div className="row-span-2">
+            <ImageItem src={imgs[0]} />
+          </div>
+          <ImageItem src={imgs[1]} />
+          <ImageItem src={imgs[2]} />
         </div>
-        {/* 3 ảnh hàng dưới */}
-        <div className="grid grid-cols-3 gap-1 flex-1">
-          <ImageItem src={imagesToShow[2]} />
-          <ImageItem src={imagesToShow[3]} />
-          {/* Ảnh thứ 5 (cuối cùng) với overlay */}
-          <LastImageItem src={imagesToShow[4]} count={hiddenCount} />
-        </div>
-      </div>
-    );
-  }
+      )}
 
-  return null;
+      {count === 4 && (
+        <div className="grid grid-cols-2 grid-rows-2 gap-1 h-full">
+          {imgs.map((src, i) => (
+            <ImageItem key={i} src={src} />
+          ))}
+        </div>
+      )}
+
+      {count >= 5 && (
+        <div className="flex flex-col gap-1 h-full">
+          <div className="grid grid-cols-2 gap-1 flex-1">
+            <ImageItem src={imgs[0]} />
+            <ImageItem src={imgs[1]} />
+          </div>
+          <div className="grid grid-cols-3 gap-1 flex-1">
+            <ImageItem src={imgs[2]} />
+            <ImageItem src={imgs[3]} />
+            <LastImageItem src={imgs[4]} count={hiddenCount} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default ImageGrid;

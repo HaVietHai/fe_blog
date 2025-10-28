@@ -2,10 +2,10 @@ import { Outlet } from "react-router-dom";
 import SidebarLeft from "./SidebarLeft";
 import SidebarRight from "./SidebarRight";
 
-export default function HomePage() {
+export default function HomeLayout() {
+
   return (
     <div className="flex h-screen overflow-hidden bg-black text-[var(--color-text-main)]">
-      
       {/* Sidebar trái */}
       <div className="w-70 flex-shrink-0 h-full overflow-y-auto no-scrollbar">
         <SidebarLeft />

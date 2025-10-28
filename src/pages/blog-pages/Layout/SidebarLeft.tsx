@@ -2,11 +2,13 @@ import { Link, useLocation } from "react-router-dom"
 import { MENU_ITEMS } from "../../../constants/menuItem.constant";
 import { IconLucide } from "../../../components/IconLucide";
 import logoImage from "../../../assets/logo-banner/V.png"
-import testImgLogo from '../../../assets/logo-banner/logofix.png'
+import { StorageService } from "../../../services/storage.service";
+import { STORAGE_KEY_AUTH_BLOG } from "../../../constants/key.constant";
 
 const SidebarLeft = () => {
 
     const location = useLocation();
+    const user = StorageService.getItem(STORAGE_KEY_AUTH_BLOG)         
 
     return (
         <aside className="w-70 sticky border-r border-[var(--color-border-soft)] p-2 bg-black">
@@ -41,10 +43,10 @@ const SidebarLeft = () => {
                 className={`flex flex-row w-full h-auto mt-19 p-2 rounded-full items-center justify-between
                     hover:bg-[var(--color-border-soft)] cursor-pointer`}
             >
-                <img src={testImgLogo} style={{ width: "50px", height: "50px", borderRadius: "30px", alignItems: 'center' }} />
+                <img src={user.user.avatar} style={{ width: "50px", height: "50px", borderRadius: "30px", alignItems: 'center' }} />
                 <div className="flex flex-col ml-3 flex-1">
-                    <span className="text-lg font-serif mb-2 text-white">Email</span>
-                    <span className="text-sm text-gray-500 break-words">Username</span>
+                    <span className="text-lg font-serif mb-2 text-white">{user.user.userName || user.user.username}</span>
+                    <span className="text-sm text-gray-500 break-words">{user.user.email}</span>
                 </div>
                 <IconLucide name="MoreHorizontal" className="text-white" />
             </div>

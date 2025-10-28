@@ -88,7 +88,7 @@ const LoginPage = () => {
                 <Switch
                   checked={loginFormDto.remember}
                   name="remember"
-                  label="Remember"
+                  label={`${loginFormDto.remember ? "I remember you" : "Remember"}`}
                   onChange={handleChangeForm}
                 />
               </div>

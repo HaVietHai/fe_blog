@@ -6,7 +6,6 @@ import ProtectedRouter from "./guard/ProtectedRouter";
 import { MENU_ITEMS } from "../constants/menuItem.constant";
 import { lazy, type JSX } from "react";
 import { STORAGE_KEY_AUTH_BLOG } from "../constants/key.constant";
-import path from "path";
 
 // --- Lazy load pages ---
 // LƯU Ý: Hãy chắc chắn rằng tên file và đường dẫn là chính xác.
@@ -14,6 +13,7 @@ import path from "path";
 const HomeLayout = lazy(() => import("../pages/Blog-Pages/Layout/HomeLayout"));
 const ProfilePage = lazy(() => import("../pages/Blog-Pages/ProfilePage"));
 const LoginPage = lazy(() => import('../pages/LoginPage'));
+const WelcomePage = lazy(() => import('../pages/WelcomePage'));
 const RegisterPage = lazy(() => import('../pages/RegitserPage')); // KIỂM TRA LẠI TÊN FILE NÀY
 const ForgetPasswordPage = lazy(() => import('../pages/ForgetPassword/ForgetPage'));
 const ChangePasswordPage = lazy(() => import('../pages/ForgetPassword/ChangePassPage'));
@@ -22,6 +22,8 @@ const ExplorePage = lazy(() => import('../pages/Blog-Pages/ExplorePage'));
 const NotificationPage = lazy(() => import('../pages/Blog-Pages/NotificationPage'));
 const MessagePage = lazy(() => import('../pages/Blog-Pages/MessagePage'));
 const MorePage = lazy(() => import('../pages/Blog-Pages/MorePage'));
+const PostDetail = lazy(() => import('../pages/Blog-Pages/DetailPost/PostDetail'));
+const PostDetailPreview = lazy(() => import('../pages/Blog-Pages/DetailPost/PostDetailPreview'));
 
 const pageMap: Record<string, JSX.Element> = {
     "/": <FeedPage />,
@@ -31,6 +33,8 @@ const pageMap: Record<string, JSX.Element> = {
     "/message": <MessagePage />,
     "/more": <MorePage />,
     "/feed": <FeedPage />,
+    "/post/:postId": <PostDetail />,
+    "/post-pre/:postId": <PostDetailPreview />
 }
 
 let routes = {
@@ -49,7 +53,11 @@ let routes = {
                     .map((item) => ({
                         path: item.to === "/" ? "" : item.to.replace("/", ""),
                         element: pageMap[item.to]
-                    }))
+                    })),
+                {
+                    path: "/post/:postId",
+                    element: <PostDetail />
+                }
             ]
         },
         // route đổi mật khẩu (không nằm trong layout chính)
@@ -65,9 +73,10 @@ let routes = {
 
     // 🧭 Các route public (ai cũng vào được) (Không thay đổi)
     public: [
+        { path: "/welcome", element: <WelcomePage /> },
         { path: "/login", element: <LoginPage /> },
         { path: "/register", element: <RegisterPage /> },
-        { path: "/forgot-password", element: <ForgetPasswordPage /> },
+        { path: "/forgot-password", element: <ForgetPasswordPage /> }
     ],
 
     // 🔁 Redirect logic (Không thay đổi)
