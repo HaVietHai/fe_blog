@@ -1,4 +1,12 @@
 @import "tailwindcss";
+@import "./styles/theme.css";
+
+html, body {
+  font-family: var(--font-sans);
+  background-color: var(--color-brand-dark);
+  color: var(--color-text-main);
+}
+
 
 /* Reset và Cài đặt chung */
 :root {
@@ -10,8 +18,11 @@
     --info-border: #2970ff;
     --text-color: #333;
     --shadow-color: rgba(0, 0, 0, 0.1);
-}
-
-body {
-    font-family: Inter, sans-serif;
+      /* Đảm bảo các thẻ gốc luôn chiếm 100% chiều cao và rộng */
+    height: 100%;
+    width: 100%;
+  
+    /* Reset lại các khoảng trống mặc định của trình duyệt */
+    margin: 0;
+    padding: 0;
 }

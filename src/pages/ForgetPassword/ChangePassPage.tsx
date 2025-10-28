@@ -17,9 +17,9 @@ const ChangePasswordPage = () => {
   }
 
   return (
-    <div className="h-full max-w-full flex justify-center items-center bg-gradient-to-br from-blue-500 to-cyan-300 p-4">
+    <div className="v-background-web max-w-full flex justify-center items-center p-4">
       <div className="relative max-w-5xl w-150 h-auto bg-white md:p-6 p-12 shadow-2xl rounded-xl">
-        <h1 className="font-bold text-2xl ">Đổi mật khẩu</h1>
+        <h1 className="effect-text-h">Đổi mật khẩu</h1>
         <form className="space-y-4 mt-4">
           <Password name="password" label="Password" placeholder="Mật khẩu mới" />
           <Password name="passConfirm" label="Password Confirm" placeholder="Xác nhận lại mật khẩu" />

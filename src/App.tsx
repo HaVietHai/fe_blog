@@ -7,6 +7,8 @@ import { store } from "./redux/store"
 const AppRouter = lazy(() => import('./router/AppRouter'))
 
 const App = () => {
+
+
   return (
     <React.StrictMode>
       <Provider store={store}>
