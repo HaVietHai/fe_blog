@@ -1,8 +1,9 @@
+import Header from "../../components/Forms/Header"
 
 const NotifiactionPage = () => {
   return (
     <div>
-        <span>Notification Page</span>
+      <Header title="Notifications" isDetail/>
     </div>
   )
 }

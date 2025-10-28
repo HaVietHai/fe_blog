@@ -1,6 +1,5 @@
 import { likeComment, unlikeComment } from "../api/comment.api";
-import { createPost, getPost, getPostById, likePost, removePost, unlikePost, updatePost } from "../api/post.api";
-import type { IComment } from "../types/comment.type";
+import { createPost, getPost, getPostById, getPostOwner, likePost, removePost, unlikePost, updatePost } from "../api/post.api";
 import type { ILikePost, IPost, IPostRequestDto } from "../types/post.type";
 
 export const handleCreatePost = async(data: IPost):Promise<IPost> =>{
@@ -15,11 +14,15 @@ export const handleGetPostById = async(postId: string):Promise<IPost> =>{
     return await getPostById(postId);
 }
 
-export const handleRemovePost = async(postId: string):Promise<void> =>{
-    return await removePost(postId)
+export const handleGetPostOwner = async(authorId: string, page: number):Promise<IPostRequestDto> =>{
+    return await getPostOwner(authorId, page)
 }
 
-export const handleUpdatePost = async(postId: string, data: IPost):Promise<IPost> =>{
+export const removePostAct = async(postId: string, authorId: string):Promise<void> =>{
+    return await removePost(postId, authorId)
+}
+
+export const updatePostAct = async(postId: string, data: IPost):Promise<IPost> =>{
     return await updatePost(postId,data);
 }
 

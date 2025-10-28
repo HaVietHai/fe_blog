@@ -10,6 +10,7 @@ import { STORAGE_KEY_AUTH_BLOG } from "../constants/key.constant";
 // --- Lazy load pages ---
 // LƯU Ý: Hãy chắc chắn rằng tên file và đường dẫn là chính xác.
 // Ví dụ: `RegitserPage` có thể là lỗi chính tả của `RegisterPage`.
+const ServerDownPage = lazy(() => import("../pages/ServerDownPage"));
 const HomeLayout = lazy(() => import("../pages/Blog-Pages/Layout/HomeLayout"));
 const ProfilePage = lazy(() => import("../pages/Blog-Pages/ProfilePage"));
 const LoginPage = lazy(() => import('../pages/LoginPage'));
@@ -74,6 +75,7 @@ let routes = {
     // 🧭 Các route public (ai cũng vào được) (Không thay đổi)
     public: [
         { path: "/welcome", element: <WelcomePage /> },
+        { path: "/server-down", element: <ServerDownPage />},
         { path: "/login", element: <LoginPage /> },
         { path: "/register", element: <RegisterPage /> },
         { path: "/forgot-password", element: <ForgetPasswordPage /> }

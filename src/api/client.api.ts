@@ -42,6 +42,19 @@ client.interceptors.request.use(
 client.interceptors.response.use(
   (response) => response.data,
   async (error) => {
+
+    if(
+      error.response?.status === 500
+      || error.code === "ERR_NETWORK"
+      || error.message.includes("Network Error")
+      || error.message.includes("ERR_CONNECTION_REFUSED")
+      || error.message.includes("ERR_ABORTED")
+    ){
+      console.warn("Không thể kết nối đến server.")
+      window.location.href = "/server-down"
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401) {
       const originalRequest = error.config;
       if (!originalRequest._retry) {
@@ -90,7 +103,7 @@ client.interceptors.response.use(
   }
 );
 
-// ✅ Tự động refresh mỗi 1 phút
+// ✅ Tự động refresh mỗi 5 phút
 setInterval(async () => {
   const auth = StorageService.getItem(STORAGE_KEY_AUTH_BLOG);
   if (auth?.refresh_token) {
@@ -107,6 +120,6 @@ setInterval(async () => {
       window.location.href = "/login";
     }
   }
-}, 1000 * 60);
+}, 5000 * 60);
 
 export default client;

@@ -1,8 +1,9 @@
+import Header from "../../components/Forms/Header"
 
 const MessagePage = () => {
   return (
     <div>
-        <span>Message Page</span>
+      <Header title="Messages" isDetail/>
     </div>
   )
 }

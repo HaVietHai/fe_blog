@@ -8,7 +8,7 @@ import { STORAGE_KEY_AUTH_BLOG } from "../../../constants/key.constant";
 const SidebarLeft = () => {
 
     const location = useLocation();
-    const user = StorageService.getItem(STORAGE_KEY_AUTH_BLOG)         
+    const user = StorageService.getItem(STORAGE_KEY_AUTH_BLOG)
 
     return (
         <aside className="w-70 sticky border-r border-[var(--color-border-soft)] p-2 bg-black">
@@ -27,7 +27,12 @@ const SidebarLeft = () => {
                                     : "hover:text-cyan-400 hover:rounded-lg hover:bg-[var(--color-brand-dark)]"
                                 }`}
                         >
-                            <IconLucide name={icon} className="w-5 h-5" />
+                            <IconLucide
+                                name={icon}
+                                className={`w-5 h-5
+                                    ${isActive ? "fill-cyan-500" : ""}
+                                `}
+                            />
                             <span>{title}</span>
                         </Link>
                     )

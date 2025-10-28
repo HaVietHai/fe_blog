@@ -12,6 +12,7 @@ import List from "../../../components/List";
 import ViewPostDetail from "../../../components/ViewPostDetail";
 import { StorageService } from "../../../services/storage.service";
 import { useLikeToggle } from "../../../hook/useLikeToggle";
+import Header from "../../../components/Forms/Header";
 
 
 const PostDetail = () => {
@@ -82,17 +83,7 @@ const PostDetail = () => {
   return (
     <div className="relative min-h-screen bg-black text-white w-auto">
       {/* Header cố định */}
-      <div className="fixed top-0 left-72 w-212 h-10 bg-black border-b border-[var(--color-border-soft)] flex items-center p3 z-50">
-        <button onClick={() => navigate(-1)}>
-          <IconLucide name="ArrowLeft" className="text-white hover:brightness-110 hover:text-cyan-500 w-5 h-5" />
-        </button>
-        <span
-          onClick={() => navigate('/feed', { replace: true })}
-          className="font-semibold text-xl ml-1.5 hover:cursor-pointer hover:text-cyan-500"
-        >
-          Community Post
-        </span>
-      </div>
+      <Header isDetail={true} title="Community" isIcons={true}/>
       {/* Bài post chi tiết */}
       <div className="flex flex-col p-4 pt-7">
         <div className="flex flex-col space-y-4">
