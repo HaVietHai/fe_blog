@@ -17,6 +17,11 @@ const Footer: React.FC<IProps> = ({
     viewFooter, countComment, countLiked,
     isLiked, onLiked, onChat, onShare, onRepost, onSave
 }) => {
+
+    const handleChat = () =>{
+        console.log("Tin nhan");
+    }
+
     return (
         <>
             {viewFooter == 1 && (

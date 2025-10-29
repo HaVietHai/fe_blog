@@ -30,9 +30,9 @@ const Header: React.FC<IProps> = ({
                     <div></div>
                 )}
                 {!isDetail ? (
-                    <div className="flex flex-col ml-1">
-                        <h1 className="ml-1 font-semibold text-lg">{title}</h1>
-                        <span className="text-sm text-gray-400 font-mono mr-10">{numberPost}post</span>
+                    <div className="flex flex-col">
+                        <h1 className="ml-1 font-semibold text-lg flex-1">{title?.toUpperCase()}</h1>
+                        <span className="text-sm text-gray-400 font-mono flex-1 ml-1">{numberPost}post</span>
                     </div>
                 ) : (
                     <span

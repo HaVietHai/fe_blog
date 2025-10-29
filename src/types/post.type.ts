@@ -8,7 +8,7 @@ export interface IPost {
     authorId?: IUser,
     commentCount?:number,
     isActive?: boolean,
-    images?: string[]
+    images?: string[] | File[]
 }
 
 export interface IPostRequestDto{

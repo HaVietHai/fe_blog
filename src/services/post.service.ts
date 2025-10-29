@@ -2,7 +2,7 @@ import { likeComment, unlikeComment } from "../api/comment.api";
 import { createPost, getPost, getPostById, getPostOwner, likePost, removePost, unlikePost, updatePost } from "../api/post.api";
 import type { ILikePost, IPost, IPostRequestDto } from "../types/post.type";
 
-export const handleCreatePost = async(data: IPost):Promise<IPost> =>{
+export const handleCreatePost = async(data: any):Promise<any> =>{
     return await createPost(data)
 }
 
