@@ -18,7 +18,7 @@ const WelcomePage = lazy(() => import('../pages/WelcomePage'));
 const RegisterPage = lazy(() => import('../pages/RegitserPage')); // KIỂM TRA LẠI TÊN FILE NÀY
 const ForgetPasswordPage = lazy(() => import('../pages/ForgetPassword/ForgetPage'));
 const ChangePasswordPage = lazy(() => import('../pages/ForgetPassword/ChangePassPage'));
-const FeedPage = lazy(() => import('../pages/Blog-Pages/FeedPage'));
+const FeedPage = lazy(() => import('../pages/FeedPage'));
 const ExplorePage = lazy(() => import('../pages/Blog-Pages/ExplorePage'));
 const NotificationPage = lazy(() => import('../pages/Blog-Pages/NotificationPage'));
 const MessagePage = lazy(() => import('../pages/Blog-Pages/MessagePage'));

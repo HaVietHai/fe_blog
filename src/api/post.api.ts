@@ -1,5 +1,5 @@
 import type { ILikePost, IPost, IPostRequestDto } from "../types/post.type";
-import client from "./client.api";
+import client, { clientMultipart } from "./client.api";
 
 export const getPost = async(page: number):Promise<IPostRequestDto> => {
     return await client.post(`/api/v1/post/page/${page}`)
@@ -13,8 +13,8 @@ export const getPostOwner = async(authorId: string, page: number):Promise<IPostR
     return await client.post(`/api/v1/post/${authorId}/${page}`)
 }   
 
-export const createPost = async(dto: IPost):Promise<IPost> =>{
-    return await client.post(`/api/v1/post/create`,dto)
+export const createPost = async(dto: any):Promise<any> =>{
+    return await clientMultipart.post(`/api/v1/post/create`, dto);
 }
 
 export const removePost = async(id: string, authorId: string):Promise<void> =>{

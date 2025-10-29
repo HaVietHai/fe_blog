@@ -30,7 +30,9 @@ const ViewPostDetail: React.FC<IProps> = ({
                     {post?.content}
                 </span>
             </div>
-            <ImageGrid images={post?.images} />
+            <ImageGrid
+                images={post?.images}
+            />
             <span className="text-[var(--color-text-secondary)]">
                 · Time to now ·· {post?.commentCount == 0 ? "Chưa có bất kỳ comment nào" : post?.commentCount}
             </span>

@@ -25,7 +25,7 @@ const ProfilePage = () => {
       const response = await handleGetPostOwner(id, page)
 
       setPosts(response.posts)
-      setNumberPost(response.pagination);
+      setNumberPost(response.pagination.totalPosts);
     } catch (error: any) {
       errorHandler(error)
     }
@@ -37,16 +37,16 @@ const ProfilePage = () => {
 
   useEffect(() => {
     handleGetOwnerPost(id, page)
-  }, [page, id])
+  }, [page, id])  
 
   return (
     <div className="relative min-h-screen bg-black text-white w-auto">
       {/* Header co dinh */}
-      <Header isDetail={false} title={"Username"} numberPost={1} isIcons={true} />
+      <Header isDetail={false} title={user.username || user.userName} numberPost={numberPost} isIcons={true} />
       {/* Body Profile */}
       <div className="w-full h-90 bg-black flex flex-col">
         <div className="absolute overflow-hidden w-full h-85 bg-gray-900">
-          <img src={!avatar ? "" : avatar} className="object-cover w-full h-fit" />
+          <img src={user.banner ? user.banner : avatar} className="object-cover w-full h-fit" />
         </div>
         <div className="flex flex-row relative w-45 h-45 overflow-hidden rounded-full top-65 left-3 border-4 border-black">
           <img src={user.avatar} className="w-45 h-45 object-cover bg-black" />

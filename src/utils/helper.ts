@@ -10,8 +10,8 @@ const notificationIcons: Record<NotificationType, string> = {
 
 const notificationTypeClasses: Record<NotificationType, { wrapper: string; icon: string }> = {
     success: {
-        wrapper: 'bg-green-100 border-green-400',
-        icon: 'text-green-500',
+        wrapper: 'bg-cyan-100 border-cyan-400',
+        icon: 'text-cyan-500',
     },
     error: {
         wrapper: 'bg-red-100 border-red-400',

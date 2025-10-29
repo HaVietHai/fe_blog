@@ -14,6 +14,15 @@ const client: AxiosInstance = axios.create({
   }
 });
 
+// axios riêng để cho việc upload cả file
+export const clientMultipart: AxiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_BASE_URL,
+  timeout: 10000,
+  headers:{
+    "Content-Type": "multipart/form-data"
+  }
+})
+
 // ✅ axios riêng để refresh (không interceptor)
 const refreshClient = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
