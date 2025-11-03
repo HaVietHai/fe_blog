@@ -25,10 +25,12 @@ const MessagePage = lazy(() => import('../pages/Blog-Pages/MessagePage'));
 const MorePage = lazy(() => import('../pages/Blog-Pages/MorePage'));
 const PostDetail = lazy(() => import('../pages/Blog-Pages/DetailPost/PostDetail'));
 const PostDetailPreview = lazy(() => import('../pages/Blog-Pages/DetailPost/PostDetailPreview'));
+const InforFriendPage = lazy(() => import('../pages/Blog-Pages/InforFriendPage'));
 
 const pageMap: Record<string, JSX.Element> = {
     "/": <FeedPage />,
     "/profile": <ProfilePage />,
+    "/infor/:id": <InforFriendPage />,
     "/explore": <ExplorePage />,
     "/notification": <NotificationPage />,
     "/message": <MessagePage />,
@@ -58,6 +60,10 @@ let routes = {
                 {
                     path: "/post/:postId",
                     element: <PostDetail />
+                },
+                {
+                    path: "infor/:id",
+                    element: <InforFriendPage />
                 }
             ]
         },

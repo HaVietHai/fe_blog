@@ -22,7 +22,7 @@ export const removePostAct = async(postId: string, authorId: string):Promise<voi
     return await removePost(postId, authorId)
 }
 
-export const updatePostAct = async(postId: string, data: IPost):Promise<IPost> =>{
+export const updatePostAct = async(postId: string, data: any):Promise<any> =>{
     return await updatePost(postId,data);
 }
 
