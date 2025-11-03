@@ -21,8 +21,8 @@ export const removePost = async(id: string, authorId: string):Promise<void> =>{
     return await client.post(`/api/v1/post/postId/${id}/authorId/${authorId}`)
 }
 
-export const updatePost = async(id: string, dto: IPost):Promise<IPost> =>{
-    return await client.put(`/api/v1/post/update/${id}`, dto)
+export const updatePost = async(id: string, dto: any):Promise<any> =>{
+    return await clientMultipart.put(`/api/v1/post/${id}`, dto)
 }
 
 export const likePost = async(data: ILikePost):Promise<void> =>{

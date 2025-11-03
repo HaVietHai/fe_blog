@@ -10,19 +10,9 @@ export default defineConfig({
   ],
   optimizeDeps: {
     include: ["lucide-react"]
+  },
+  server:{
+    host: true,
+    port: 3001
   }
-  // server:{
-  //   proxy:{
-  //     '/api':{
-  //       target: 'http://192.168.1.10:3000',
-  //       changeOrigin: true,
-  //       secure: false // <- bỏ verify SSL self-signed
-  //     },
-  //     '/connect':{
-  //       target: 'http://192.168.1.10:3000',
-  //       changeOrigin: true,
-  //       secure: false // <- bỏ verify SSL self-signed
-  //     }
-  //   }
-  // }
 })

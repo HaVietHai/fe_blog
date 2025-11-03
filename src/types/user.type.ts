@@ -1,8 +1,11 @@
 export interface IUser{
+    _id?:string,
     username: string,
     email: string,
     password?: string,
-    avatar?: string
+    avatar?: string,
+    banner?: string,
+    followed?: string[]
 }
 
 export interface LoginDtoResponse{
@@ -39,4 +42,9 @@ export interface OTPCodeRequestDto extends ISendMail{
 
 export interface OtpState{
     verified: boolean,
+}
+
+export interface IFollow{
+    authorId?: string,
+    followerId?: string    
 }

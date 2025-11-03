@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { IconLucide } from "../IconLucide"
 import type React from "react";
-import { div } from "framer-motion/client";
 
 interface IProps {
     isDetail: boolean,

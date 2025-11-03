@@ -15,7 +15,7 @@ interface IProps{
 }
 
 const Edit:React.FC<IProps> = ({
-    name, onClose, postIsSelected, handleChangeForm
+    name, onClose, postIsSelected, handleChangeForm, handleSelectedFiles
 }) => {
     return (
         <div
