@@ -1,12 +1,12 @@
 import type { IComment, ICommentRequestDto, ILikeComment } from "../types/comment.type";
-import client from "./client.api";
+import client, { clientMultipart } from "./client.api";
 
 export const getCommentByPost = async(postId: string, page: number):Promise<ICommentRequestDto> =>{
     return await client.post(`/api/v1/comment/${postId}/${page}`)
 }
 
-export const createComment = async(postId: string, data: IComment)=>{
-    return await client.post(`/api/v1/comment/create/${postId}`,data)
+export const createComment = async(postId: string, data: any)=>{
+    return await clientMultipart.post(`/api/v1/comment/create/${postId}`,data)
 }
 
 export const removeComment = async(id: string, authorId: string) =>{

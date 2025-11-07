@@ -12,7 +12,7 @@ interface IProps {
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     allowed: boolean;
-    onPost: (e: React.ChangeEvent<HTMLButtonElement>) => void,
+    onPost: (e: React.ChangeEvent<HTMLButtonElement | HTMLAreaElement>) => void,
     isLoading: boolean,
     onFlieSelected?: (files: FileList | null) => void,
 }

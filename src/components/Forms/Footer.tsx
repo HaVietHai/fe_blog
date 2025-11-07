@@ -11,14 +11,15 @@ interface IProps {
     onShare?: () => void,
     onRepost?: () => void,
     onSave?: () => void
+    isComment?: boolean
 }
 
 const Footer: React.FC<IProps> = ({
     viewFooter, countComment, countLiked,
-    isLiked, onLiked, onChat, onShare, onRepost, onSave
+    isLiked, onLiked, onChat, onShare, onRepost, onSave, isComment
 }) => {
 
-    const handleChat = () =>{
+    const handleChat = () => {
         console.log("Tin nhan");
     }
 
@@ -60,31 +61,39 @@ const Footer: React.FC<IProps> = ({
                             {countLiked}
                         </span>
                     </div>
-                    <div
-                        onClick={onRepost}
-                        className="order-3"
-                        title="Repost"
-                    >
-                        <IconLucide name="Shuffle" className="w-5 h-5 transition-all duration-300 hover:text-green-500 hover:cursor-pointer" />
-                    </div>
-                    <div
-                        className="flex flex-row order-4 space-x-2"
-                    >
+                    {!isComment ? (
                         <div
-                            onClick={onSave}
-                            className=""
-                            title="Save"
+                            onClick={onRepost}
+                            className="order-3"
+                            title="Repost"
                         >
-                            <IconLucide name="Bookmark" className="w-5 h-5 hover:text-cyan-500 hover:cursor-pointer" />
+                            <IconLucide name="Shuffle" className="w-5 h-5 transition-all duration-300 hover:text-green-500 hover:cursor-pointer" />
                         </div>
+                    ) : (
+                        <div></div>
+                    )}
+                    {!isComment ? (
                         <div
-                            onClick={onShare}
-                            className=""
-                            title="Share"
+                            className="flex flex-row order-4 space-x-2"
                         >
-                            <IconLucide name="Share" className="w-5 h-5 hover:text-cyan-500 hover:cursor-pointer" />
+                            <div
+                                onClick={onSave}
+                                className=""
+                                title="Save"
+                            >
+                                <IconLucide name="Bookmark" className="w-5 h-5 hover:text-cyan-500 hover:cursor-pointer" />
+                            </div>
+                            <div
+                                onClick={onShare}
+                                className=""
+                                title="Share"
+                            >
+                                <IconLucide name="Share" className="w-5 h-5 hover:text-cyan-500 hover:cursor-pointer" />
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+                        <div></div>
+                    )}
                 </div>
             )}
             {viewFooter == 2 && (

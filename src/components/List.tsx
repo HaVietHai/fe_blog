@@ -16,20 +16,23 @@ import errorHandler from "../utils/errorHandle";
 import { removePostAct } from "../services/post.service";
 import ModalView from "../pages/Blog-Pages/Post/View/Modal";
 import { showNotification } from "../utils/helper";
+import ConfirmModal from "./CofirmModal";
 
 interface IProp {
     items: (IPost | IComment)[]
     className?: React.HTMLAttributes<HTMLDivElement> | string | undefined,
     isMe?: boolean;
     onReload?: () => void,
+    isComment?: boolean
 }
 
 const List: React.FC<IProp> = ({
-    items, className, isMe, onReload
+    items, className, isMe, onReload, isComment
 }) => {
 
     const [showMenu, setShowMenu] = useState<boolean>(false)
     const [showedit, setShowEdit] = useState<boolean>(false)
+    const [showConfirm, setShowConfirm] = useState<boolean>(false);
     const [idSelected, setIdSelected] = useState<string | undefined>("");
 
     // 1. Chỉ giữ lại state 'authUserId'
@@ -54,19 +57,21 @@ const List: React.FC<IProp> = ({
         setShowEdit(true);
     }
 
-    const handleRemovePost = async (postId: string, authorId: string) => {
-        setShowMenu(false)
+    const handleRemovePost = async () => {
+        setShowMenu(false);
+        setShowConfirm(true);
+    }
 
+    const onRemovePost = async (postId: string, authorId: string) => {
         if (!authorId) return;
-
-        if (confirm("Bạn có chắc xóa bài viết này:")) {
-            try {
-                await removePostAct(postId, authorId)
-                if (onReload) onReload();
-                showNotification({ type: 'success', message: "Bài viết đã được gỡ xuống", duration: 3000 })
-            } catch (error) {
-                errorHandler(error)
-            }
+        
+        try {
+            await removePostAct(postId, authorId);
+            if (onReload) onReload();
+            showNotification({ type: 'success', message: "Bài viết đã được gỡ xuống", duration: 3000 })
+            setShowConfirm(false);
+        } catch (error) {
+            errorHandler(error);
         }
     }
 
@@ -82,7 +87,7 @@ const List: React.FC<IProp> = ({
                         const currentLikedArray = Array.isArray(item.liked) ? item.liked : [];
                         const isLiked = authUserId ? currentLikedArray.includes(authUserId) : false;
                         const likeCount = currentLikedArray.length;
-                        const id = item._id;                        
+                        const id = item._id;
 
                         return (
                             <div
@@ -132,7 +137,7 @@ const List: React.FC<IProp> = ({
                                                         <div className="absolute left-15 bottom-150 z-50">
                                                             <PostMoreMenu
                                                                 onClose={() => setShowMenu(false)}
-                                                                onDelete={() => handleRemovePost(item._id, authUserId)}
+                                                                onDelete={() => handleRemovePost()}
                                                                 onEdit={handleEdit}
                                                             />
                                                         </div>
@@ -169,6 +174,7 @@ const List: React.FC<IProp> = ({
                                 </div>
                                 {/* Footer */}
                                 <Footer
+                                    isComment={isComment}
                                     onChat={() => changePageDetail(id)}
                                     isLiked={isLiked}
                                     viewFooter={1}
@@ -181,11 +187,19 @@ const List: React.FC<IProp> = ({
                     })}
                     {showedit && (
                         <ModalView
+                            authorId={authUserId}
                             onClose={() => setShowEdit(false)}
                             postId={idSelected ? idSelected : ""}
                             isEdit
                             name="title"
                             onReload={onReload}
+                        />
+                    )}
+                    {showConfirm && (
+                        <ConfirmModal
+                            onCancel={() => setShowConfirm(false)}
+                            onConfirm={() => onRemovePost(idSelected,authUserId)}
+                            show={showConfirm}
                         />
                     )}
                 </div>

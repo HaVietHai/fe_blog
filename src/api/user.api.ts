@@ -22,11 +22,11 @@ export const inforFriend = async(id: string):Promise<IUser> =>{
 }
 
 export const follow = async(data: IFollow):Promise<any> =>{
-    const { authorId, followerId} = data
-    return await client.post(`/api/v1/user/unfollow/${authorId}/${followerId}`)
+    const { currentUserId, targetUserId} = data
+    return await client.post(`/api/v1/user/follow/${targetUserId}/${currentUserId}`)
 }
 
 export const unfollow = async(data: IFollow):Promise<any> =>{
-    const { authorId, followerId} = data
-    return await client.post(`/api/v1/user/follow/${authorId}/${followerId}`)
+    const { targetUserId, currentUserId} = data
+    return await client.post(`/api/v1/user/unfollow/${targetUserId}/${currentUserId}`)
 }

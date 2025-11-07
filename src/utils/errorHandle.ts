@@ -8,6 +8,22 @@ const showErrorNotification = (message: string) => {
     });
 };
 
+const normalizeMessage = (data: any): string => {
+    // Chuẩn hóa các kiểu dữ liệu backend có thể trả về
+    if (!data) return 'Đã xảy ra lỗi không xác định.';
+    if (typeof data === 'string') return data;
+    if (Array.isArray(data)) return data.join(', ');
+    if (typeof data === 'object') {
+        return (
+            data.message ||
+            data.error?.message ||
+            data.error ||
+            JSON.stringify(data)
+        );
+    }
+    return String(data);
+};
+
 const errorHandler = (error: any) => {
     // Mất kết nối mạng
     if (!navigator.onLine) {
@@ -16,9 +32,8 @@ const errorHandler = (error: any) => {
     }
 
     const response = error?.response;
-    console.log("response:", response.data.message);
-    console.log("status:", response.status);
-    
+    console.log("response:", response?.data?.message);
+    console.log("status:", response?.status);
 
     // Nếu không có phản hồi từ server (VD: server sập)
     if (!response) {
@@ -27,16 +42,14 @@ const errorHandler = (error: any) => {
         return;
     }
 
+    // Chuẩn hóa dữ liệu phản hồi để an toàn
+    const safeData = response?.data || {};
+
     // Bắt lỗi cụ thể theo status code
     if (response.status === 400) {        
-        const apiMessage =
-            response.data?.message ||
-            response.data?.error?.message ||
-            response.data ||
-            'Yêu cầu không hợp lệ.';
+        const apiMessage = normalizeMessage(safeData);
         console.log("Lỗi là:", apiMessage);
-            
-        showErrorNotification(apiMessage);
+        showErrorNotification(apiMessage || 'Yêu cầu không hợp lệ.');
         return;
     }
 
@@ -51,10 +64,7 @@ const errorHandler = (error: any) => {
     }
 
     // Lỗi mặc định
-    const message =
-        response.data?.message ||
-        response.data?.error?.message ||
-        'Đã xảy ra lỗi không xác định.';
+    const message = normalizeMessage(safeData);
     showErrorNotification(getErrorMessage(message));
 };
 

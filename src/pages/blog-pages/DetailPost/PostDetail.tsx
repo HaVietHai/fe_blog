@@ -1,11 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom"
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { IPost } from "../../../types/post.type";
 import errorHandler from "../../../utils/errorHandle";
 import { handleGetPostById } from "../../../services/post.service";
 import { IconLucide } from "../../../components/IconLucide";
 import { STORAGE_KEY_AUTH_BLOG } from "../../../constants/key.constant";
-import { handleGetComment } from "../../../services/comment.service";
+import { handleGetComment, handleReplyPost } from "../../../services/comment.service";
 import type { IComment } from "../../../types/comment.type";
 import Footer from "../../../components/Forms/Footer";
 import List from "../../../components/List";
@@ -13,19 +13,47 @@ import ViewPostDetail from "../../../components/ViewPostDetail";
 import { StorageService } from "../../../services/storage.service";
 import { useLikeToggle } from "../../../hook/useLikeToggle";
 import Header from "../../../components/Forms/Header";
+import Reply from "../../../components/Forms/Reply";
+import ImageGridAddOrUpdate from "../../../components/ImageGripPre";
+import { showNotification } from "../../../utils/helper";
 
 
 const PostDetail = () => {
 
   const { postId } = useParams();
-  const navigate = useNavigate();
   const token = StorageService.getItem(STORAGE_KEY_AUTH_BLOG);
+  const currentUser = token.user;
 
   const [isLoading, setisLoading] = useState<boolean>(false);
+  const [isNull, setIsNull] = useState<boolean>(false);
   const [originalPost, setOriginalPost] = useState<IPost | null>(null);
   const [comments, setComments] = useState<IComment[]>([]);
   const [page, setPage] = useState<number>(1);
-  const [allowed, setAllowed] = useState<boolean>(false);
+  const [imgPreview, setImgPreview] = useState<(string | File)[]>([]);
+  const [formReply, setFormReply] = useState<IComment>({
+    content: '',
+    postId: "",
+    authorId: "",
+    images: []
+  })
+
+  const handleChangeForm = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormReply(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleSelectedFiles = (files: FileList | null) => {
+    if (!files) return;
+    const newFiles = Array.from(files);
+    setImgPreview((prev) => [...prev, ...newFiles])
+    setFormReply((prev) => ({
+      ...prev,
+      images: [...(prev.images || []), ...newFiles]
+    }))
+  }
 
   // Lấy authUserId (giữ nguyên)
   const [authUserId, setAuthUserId] = useState<string | null>(null);
@@ -36,22 +64,17 @@ const PostDetail = () => {
     }
   }, []);
 
-  // BƯỚC 3: "Ghi nhớ" mảng post
-  // Mảng này sẽ chỉ được tạo mới khi `originalPost` thực sự thay đổi
   const postArray = useMemo(() => {
     return originalPost ? [originalPost] : [];
   }, [originalPost]);
 
-  // BƯỚC 4: Sử dụng mảng đã "ghi nhớ" ở trên
   const {
     internalItems: internalPosts,
     handleToggleLike
-  } = useLikeToggle(postArray, authUserId); // <-- Đã sửa
+  } = useLikeToggle(postArray, authUserId);
 
-  // post bây giờ sẽ được lấy từ state nội bộ của hook
   const post = internalPosts[0];
 
-  // Đây là vị trí ĐÚNG của hàm loadData (giữ nguyên)
   const loadData = async (postId: string, page: number) => {
     if (!postId) return;
     try {
@@ -68,13 +91,57 @@ const PostDetail = () => {
     } finally {
       setisLoading(false);
     }
-  }  
+  }
+
+  const handleReply = async (e: React.FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    try {
+      const formData = new FormData();
+      formData.append("postId", postId || "");
+      formData.append("authorId", currentUser.id || currentUser._id || "");
+      formData.append("content", formReply.content || "");
+
+      const images = formReply.images || [];
+      images.forEach((item) => {
+        if (item instanceof File) {
+          formData.append("images", item);
+        } else if (typeof item === "string") {
+          // existing image path/URL from server
+          formData.append("existingImages", item);
+        }
+      });
+      await handleReplyPost(postId || "", formData);
+
+      setFormReply({
+        content: '',
+        postId: postId,
+        authorId: currentUser.id || currentUser._id,
+        images: []
+      })
+      setImgPreview([])
+      showNotification({
+        type: "success",
+        message: "Đã phản hồi bài đăng này thành công.",
+        duration: 3000
+      })
+    } catch (error) {
+      errorHandler(error);
+    }
+  }
 
   useEffect(() => {
     if (postId) {
       loadData(postId, page);
     }
   }, [postId, page]);
+
+  useEffect(() => {
+    setIsNull(
+      (formReply.content && formReply.content.trim().length > 0) ||
+      imgPreview.length > 0
+    )
+  }, [formReply.content, imgPreview])
 
   // Tạo các biến 'isLiked' và 'likeCount' (giữ nguyên)
   const isLiked = authUserId ? (post?.liked || []).includes(authUserId) : false;
@@ -83,7 +150,7 @@ const PostDetail = () => {
   return (
     <div className="relative min-h-screen bg-black text-white w-auto">
       {/* Header cố định */}
-      <Header isDetail={true} title="Community" isIcons={true}/>
+      <Header isDetail={true} title="Community" isIcons={true} />
       {/* Bài post chi tiết */}
       <div className="flex flex-col p-4 pt-7">
         <div className="flex flex-col space-y-4">
@@ -94,24 +161,23 @@ const PostDetail = () => {
             isLiked={isLiked}
             onLiked={() => post && handleToggleLike(post)}
           />
-          <div className="flex flex-row space-x-2">
-            <img src={token.user.avatar} className="w-12 h-12 mb-5" />
-            <div className="flex flex-row justify-between w-full">
-              <textarea
-                onClick={() => setAllowed(true)}
-                placeholder="Post your reply"
-                className="flex-1 text-lg mt-3 bg-transparent text-[var(--color-text-main)] outline-none resize-none"
+          <Reply
+            content={formReply.content}
+            name="content"
+            onReply={handleReply}
+            isNull={isNull}
+            currentUser={currentUser}
+            onChange={handleChangeForm}
+            onFlieSelected={handleSelectedFiles}
+          />
+          {imgPreview.length > 0 && (
+            <div className="mb-3">
+              <ImageGridAddOrUpdate
+                images={imgPreview}
+                onRemove={(index) => setImgPreview((prev) => prev.filter((_, i) => i !== index))}
               />
-              <button
-                type="button"
-                className="hover:cursor-not-allowed h-fit mt-3 rounded-full px-6 py-2 bg-gray-500"
-              >
-                <span className="font-bold text-sm text-black">
-                  Reply
-                </span>
-              </button>
             </div>
-          </div>
+          )}
         </div>
         {/* Danh sách bình luận */}
         <div className="w-full border-t border-[var(--color-border-soft)]">
@@ -125,7 +191,7 @@ const PostDetail = () => {
             )}
             {comments && comments.length !== 0 ? (
               <div className="p-2 md:w-130 w-180 flex flex-row justify-center items-center ml-5">
-                <List items={comments} />
+                <List items={comments} isComment={true}/>
               </div>
             ) : (
               <div className="justify-center items-center flex-row flex">
