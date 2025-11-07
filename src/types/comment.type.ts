@@ -2,7 +2,7 @@ import type { IUser } from "./user.type"
 
 export interface IComment{
     _id?: string
-    content: string,
+    content?: string,
     images?: string[],
     liked?: string[],
     postId?: string,

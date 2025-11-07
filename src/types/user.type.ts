@@ -45,6 +45,14 @@ export interface OtpState{
 }
 
 export interface IFollow{
-    authorId?: string,
-    followerId?: string    
+  currentUserId?: string; // người đang đăng nhập
+  targetUserId?: string;  // người bị follow
+}
+
+export interface User{
+    _id: string
+    avatar: string
+    email: string,
+    username?: string
+    userName?: string
 }

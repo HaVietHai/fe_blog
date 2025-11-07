@@ -1,118 +1,169 @@
-import React, { useEffect, useState } from "react"
-import ReactDOM from 'react-dom'
-import type { IPost } from "../../../../types/post.type"
-import { IconLucide } from "../../../../components/IconLucide"
-import TextArea from "../../../../components/Forms/TextArea"
-import Tag from "../../../../components/Forms/Tag"
-import errorHandler from "../../../../utils/errorHandle"
-import { handleGetPostById, updatePostAct } from "../../../../services/post.service"
-import ImageGridAddOrUpdate from "../../../../components/ImageGripPre"
-import OverlayLoading from "../../../../components/OverlayLoading"
-import { showNotification } from "../../../../utils/helper"
+import React, { useEffect, useState } from "react";
+import ReactDOM from "react-dom";
+import type { IPost } from "../../../../types/post.type";
+import { IconLucide } from "../../../../components/IconLucide";
+import TextArea from "../../../../components/Forms/TextArea";
+import Tag from "../../../../components/Forms/Tag";
+import errorHandler from "../../../../utils/errorHandle";
+import {
+  handleCreatePost,
+  handleGetPostById,
+  updatePostAct,
+} from "../../../../services/post.service";
+import ImageGridAddOrUpdate from "../../../../components/ImageGripPre";
+import OverlayLoading from "../../../../components/OverlayLoading";
+import { showNotification } from "../../../../utils/helper";
 
 interface IProps {
-  isEdit: boolean,
-  onClose: () => void,
-  onReload: () => void,
-  name: string
-  postId: string
+  postId?: string; // ✅ Nếu có thì là edit, không có thì là post mới
+  onClose: () => void;
+  onReload: () => void;
+  name: string;
+  authorId: string; // ✅ Cần cho post mới
 }
 
-const ModalView: React.FC<IProps> = ({
-  onClose, name, isEdit, postId, onReload
+const ModalPost: React.FC<IProps> = ({
+  postId,
+  onClose,
+  name,
+  onReload,
+  authorId,
 }) => {
+  const isEdit = Boolean(postId);
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [postIsSelected, setPostIsSelected] = useState<IPost>();
-  const [imgPreview, setImgPrevire] = useState<(string | File)[]>([])
-  const [isEditLoading, setIsEditLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [post, setPost] = useState<IPost>({
+    title: "",
+    images: [],
+    authorId: authorId as any,
+  });
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  const handleChangeForm = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setPostIsSelected(prev => ({
-      ...prev,
-      [name]: value
-    }))
-  }
-
-  const handleSelectedFiles = async (files: FileList | null) => {
-    if (!files) return;
-    const newFiles = Array.from(files);
-    setImgPrevire((prev) => [...prev, ...newFiles]);
-    setPostIsSelected((prev) => ({
-      ...prev,
-      images: [...(prev?.images as File[]), ...newFiles]
-    }));
-  }
-
-  const handleGetPost = async (postId: string) => {
-    if (!postId) return;
-
+  // ✅ Khi có id => load post cũ
+  const handleGetPost = async (id: string) => {
+    if (!id) return;
     try {
       setIsLoading(true);
-      const response = await handleGetPostById(postId);
-
-      setPostIsSelected(response);
+      const res = await handleGetPostById(id);
+      setPost(res);
     } catch (error) {
-      errorHandler(error)
+      errorHandler(error);
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
-  const confirmCancel = () => {
-    if (confirm("Bạn có chắc hủy chỉnh sửa bài viết này?")) {
-      onClose()
-      return;
+  // ✅ Reset hoặc load dữ liệu khi postId thay đổi
+  useEffect(() => {
+    if (postId) {
+      handleGetPost(postId);
+    } else {
+      // Reset về form rỗng khi tạo mới
+      setPost({
+        title: "",
+        images: [],
+        authorId: authorId as any,
+      });
     }
-  }
+  }, [postId, authorId]);
 
-  const handleSaveEditPost = async (postId: string) => {
-    // Api cap nhat
+  // ✅ Thay đổi nội dung form
+  const handleChangeForm = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setPost((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // ✅ Chọn thêm ảnh mới
+  const handleSelectedFiles = (files: FileList | null) => {
+    if (!files) return;
+    const newFiles = Array.from(files);
+    setPost((prev) => ({
+      ...prev,
+      images: [...(prev.images || []), ...newFiles],
+    }));
+  };
+
+  // ✅ Xóa ảnh theo index
+  const handleRemoveImage = (index: number) => {
+    setPost((prev) => ({
+      ...prev,
+      images: prev.images?.filter((_, i) => i !== index),
+    }));
+  };
+
+  // ✅ Submit (update hoặc create)
+  const handleSave = async () => {
     try {
-      setIsEditLoading(true);
+      setIsSaving(true);
       const formData = new FormData();
-      formData.append("title", postIsSelected?.title || " ");
-      formData.append("authorId", postIsSelected?.authorId?._id);
-      postIsSelected?.images?.forEach((item) => {
-        // ✅ Nếu là File thật (mới chọn thêm)
+      formData.append("title", post.title || " ");
+      formData.append("authorId", authorId);
+
+      // Giữ nguyên ảnh cũ + thêm ảnh mới
+      (post.images || []).forEach((item) => {
         if (item instanceof File) {
-          formData.append("images", item);
-        }
-        // ✅ Nếu là string (ảnh cũ giữ nguyên)
-        else if (typeof item === "string") {
-          formData.append("images", item);
+          formData.append("images", item); // ảnh mới
+        } else if (typeof item === "string") {
+          formData.append("existingImages", item); // ảnh cũ
         }
       });
 
+      // Debug kiểm tra dữ liệu gửi
       for (const [key, value] of formData.entries()) {
         console.log(key, value);
       }
 
-      await updatePostAct(postId, formData);
-      if (onReload) onReload();
-      showNotification({ type: 'success', message: 'Đã cập nhật bài viết!', duration: 3000 });
+      // ✅ Check an toàn để tránh nhầm mode
+      if (isEdit && postId) {
+        await updatePostAct(postId, formData);
+        showNotification({
+          type: "success",
+          message: "Đã cập nhật bài viết!",
+          duration: 3000,
+        });
+      } else {
+        await handleCreatePost(formData);
+        showNotification({
+          type: "success",
+          message: "Đã tạo bài viết mới!",
+          duration: 3000,
+        });
+      }
+
+      onReload();
       onClose();
     } catch (error) {
       errorHandler(error);
     } finally {
-      setIsEditLoading(false);
+      setIsSaving(false);
     }
-  }
+  };
 
-  useEffect(() => {
-    handleGetPost(postId)
-  }, [postId])
+  // ✅ Hủy modal
+  const confirmCancel = () => {
+    if (
+      confirm(
+        isEdit
+          ? "Bạn có chắc muốn hủy chỉnh sửa?"
+          : "Bạn có chắc muốn hủy tạo bài viết?"
+      )
+    ) {
+      onClose();
+    }
+  };
 
   const modalContent = (
-    <div
-      className="fixed inset-0 z-[9999] flex justify-center items-center bg-black/10 backdrop-brightness-80"
-    >
-      {/* Khoi modal chinh */}
+    <div className="fixed inset-0 z-[9999] flex justify-center items-center bg-black/10 backdrop-brightness-80">
       <div
-        onClick={(e) => e.stopPropagation()} // Chan click trong modal
+        onClick={(e) => e.stopPropagation()}
         className="bg-black border-[var(--color-border-soft)] border-1 rounded-2xl p-2 w-[90%] max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl"
       >
+        {/* Header */}
         <div className="flex flex-row">
           <button
             onClick={onClose}
@@ -121,44 +172,48 @@ const ModalView: React.FC<IProps> = ({
           >
             <IconLucide name="X" className="ml-1 w-5 h-5" />
           </button>
-          <h1 className="self-center text-xl font-semibold flex-1">Edit post</h1>
+          <h1 className="self-center text-xl font-semibold flex-1">
+            {isEdit ? "Edit Post" : "Create Post"}
+          </h1>
           <button
-            onClick={() => handleSaveEditPost(postId)}
+            onClick={handleSave}
             type="button"
             className="px-6 py-1 bg-white flex flex-row mx-1 my-1 rounded-full hover:cursor-pointer hover:bg-[var(--color-text-secondary)]"
           >
-            <OverlayLoading show={isEditLoading} />
-            <span className="text-black font-semibold text-md self-center">Save</span>
+            <OverlayLoading show={isSaving} />
+            <span className="text-black font-semibold text-md self-center">
+              {postId ? "Save" : "Post"}
+            </span>
           </button>
         </div>
-        {/* Phan title */}
+
+        {/* Title */}
         <div className="mt-2">
           <TextArea
             name={name}
-            value={postIsSelected?.title || ""}
-            label="Tiêu đề bài viết :"
+            value={post.title || ""}
+            label="Tiêu đề bài viết:"
             isEdit={true}
-            lengthInput={postIsSelected?.title?.trim().length || 0}
+            lengthInput={post.title?.trim().length || 0}
             onChange={handleChangeForm}
           />
         </div>
-        {/* Phan anh */}
-        {postIsSelected?.images ? (
+
+        {/* Images */}
+        {post.images && post.images.length > 0 ? (
           <ImageGridAddOrUpdate
-            images={postIsSelected.images}
-            onRemove={(index) => {
-              setPostIsSelected(prev => ({
-                ...prev,
-                images: prev?.images?.filter((_, i) => i !== index) as (string[] | File[])
-              }))
-              setImgPrevire(prev => prev.filter((_, i) => i !== index))
-            }}
+            images={post.images}
+            onRemove={handleRemoveImage}
           />
         ) : (
           <div className="mt-4 mb-4">
-            <h2 className="text-center text-md">Bài viết này không có ảnh! Hãy thêm ảnh cho bài viết này.</h2>
+            <h2 className="text-center text-md">
+              Chưa có ảnh. Hãy thêm ảnh cho bài viết này!
+            </h2>
           </div>
         )}
+
+        {/* Footer buttons */}
         <div className="flex flex-row my-1">
           <div className="flex-1">
             <Tag onFileSelect={handleSelectedFiles} />
@@ -172,10 +227,9 @@ const ModalView: React.FC<IProps> = ({
         </div>
       </div>
     </div>
-  )
+  );
 
-  // Render modal ngoai ra ngoai <body>
   return ReactDOM.createPortal(modalContent, document.body);
-}
+};
 
-export default ModalView;
+export default ModalPost;

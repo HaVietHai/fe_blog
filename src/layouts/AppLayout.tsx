@@ -1,9 +1,17 @@
-import { Outlet } from "react-router-dom"
+import { Outlet, useLocation } from "react-router-dom";
 
 const AppLayout = () => {
-  return (
-    <Outlet />
-  )
-}
+  const location = useLocation();
+  const isFeed =
+    location.pathname === "/" ||
+    location.pathname === "/feed" ||
+    location.pathname === "";
 
-export default AppLayout
+  // Tạo key riêng biệt giữa feed và các trang khác
+  // Điều này giúp React render lại khi rời feed
+  const layoutKey = isFeed ? "feed-layout" : `page-${location.pathname}`;
+
+  return <Outlet key={layoutKey} />;
+};
+
+export default AppLayout;

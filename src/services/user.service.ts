@@ -26,18 +26,20 @@ export const handleGetInforFriend = async(id: string):Promise<IUser> =>{
     return await inforFriend(id)
 }
 
-export const handleFollowOrUnFollow = async(data: IFollow, choice: number):Promise<void> =>{
-    if (choice === 1) {
-        return await follow({
-            authorId: data.authorId,
-            followerId: data.followerId
-        })
-    }else if (choice === 2) {
-        return await unfollow({
-            authorId: data.authorId,
-            followerId: data.followerId
-        })
-    }else{
-        throw new Error("Không nằm trong 1 và 2")
-    }
-}
+export const handleFollowOrUnFollow = async (data: IFollow, choice: number): Promise<void> => {
+  if (choice === 1) {
+    // Follow
+    return await follow({
+      currentUserId: data.currentUserId,
+      targetUserId: data.targetUserId,
+    });
+  } else if (choice === 2) {
+    // Unfollow
+    return await unfollow({
+      currentUserId: data.currentUserId,
+      targetUserId: data.targetUserId,
+    });
+  } else {
+    throw new Error("Choice không hợp lệ (chỉ nhận 1 hoặc 2)");
+  }
+};

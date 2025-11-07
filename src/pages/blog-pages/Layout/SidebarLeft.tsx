@@ -4,11 +4,19 @@ import { IconLucide } from "../../../components/IconLucide";
 import logoImage from "../../../assets/logo-banner/V.png"
 import { StorageService } from "../../../services/storage.service";
 import { STORAGE_KEY_AUTH_BLOG } from "../../../constants/key.constant";
+import { useState } from "react";
+import ModalPost from "../Post/View/Modal";
 
 const SidebarLeft = () => {
 
+    const [showPost, setShowPost] = useState<boolean>(false)
+
     const location = useLocation();
     const user = StorageService.getItem(STORAGE_KEY_AUTH_BLOG)
+    const id = user.user.id || user.user._id;
+    const handleOnReload = () =>{
+        console.log("Nothing here!!");   
+    }
 
     return (
         <aside className="w-70 sticky border-r border-[var(--color-border-soft)] p-2 bg-black">
@@ -38,6 +46,8 @@ const SidebarLeft = () => {
                     )
                 })}
                 <button
+                    type="button"
+                    onClick={() => setShowPost(true)}
                     className="px-2 py-2 mt-4 border rounded-full hover:cursor-pointer hover:brightness-125"
                     style={{ background: "var(--gradient-brand)" }}
                 >
@@ -55,6 +65,14 @@ const SidebarLeft = () => {
                 </div>
                 <IconLucide name="MoreHorizontal" className="text-white" />
             </div>
+            {showPost && (
+                <ModalPost
+                authorId={id}
+                onReload={handleOnReload}
+                onClose={() => setShowPost(false)}
+                name="title"
+                />
+            )}
         </aside>
     )
 }

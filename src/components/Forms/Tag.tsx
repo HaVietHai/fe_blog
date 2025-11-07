@@ -35,7 +35,7 @@ const Tag: React.FC<Props> = ({
     };
 
     return (
-        <div className="flex flex-row mt-5">
+        <div className="flex flex-row mt-1">
             <button
                 onClick={handleMediaClick}
                 title="Media"
