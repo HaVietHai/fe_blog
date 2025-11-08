@@ -4,20 +4,24 @@ import Text from "../components/Forms/Text"
 import Password from "../components/Forms/Password"
 import { Link, useNavigate } from "react-router-dom"
 import React, { useState } from "react"
-import type { IRegitser } from "../types/user.type"
+import type { IRegitser, ISendMail } from "../types/user.type"
 import OverlayLoading from "../components/OverlayLoading"
 import { RegisterSchema } from '../services/zod/user.service'
 import Lottie from 'lottie-react'
-import { handleRegister } from '../services/user.service'
+import { handleRegister, handleSendOtp } from '../services/user.service'
 import errorHandler from '../utils/errorHandle'
 import { REGISTER_SUCCESS } from '../constants/message.constant';
+import OTP from '../components/Forms/OTP';
+import { showNotification } from '../utils/helper';
+import { showCenterNotification } from '../utils/centerNotification';
 
 
-const RegitserPage:React.FC = () => {
+const RegitserPage: React.FC = () => {
 
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isShow, setIsShow] = useState<boolean>(false);
   const [regitserFormDto, setRegisterFormDto] = useState<IRegitser>({
     email: '',
     username: '',
@@ -49,15 +53,44 @@ const RegitserPage:React.FC = () => {
     }))
   }
 
-  const handleSubmit = async (event: React.ChangeEvent<HTMLButtonElement>): Promise<void> => {
-    event.preventDefault();
+  const handleShowOtp = async (e: React.ChangeEvent<HTMLButtonElement>): Promise<void> => {
+    e.preventDefault();
 
     if (!handleValidate()) return;
-    setErrors({});
+    handleSend()
+  }
+
+  const handleSend = async () => {
+    try {
+      setIsShow(true);
+
+      const data: ISendMail = {
+        email: regitserFormDto.email,
+        title: "Mã xác thực tạo tài khoản:"
+      };
+
+      await handleSendOtp(data);
+
+      showNotification({ type: "success", message: `Đã gửi mã xác thực về email: ${regitserFormDto.email} của bạn!`, duration: 5000 })
+    } catch (error) {
+      errorHandler(error)
+    }
+  }
+
+  const handleCancel = (e: React.ChangeEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setIsShow(false);
+  }
+
+  const handleSubmit = async () => {
     try {
       setIsLoading(true);
       await handleRegister(regitserFormDto);
-      setShowModal(true);
+
+      setIsShow(false);
+
+      navigate('/login');
+      showNotification({ type: "success", message: "Đăng ký thành công", duration: 5000 });
     } catch (error: any) {
       errorHandler(error)
     } finally {
@@ -82,9 +115,9 @@ const RegitserPage:React.FC = () => {
             </form>
             <button
               disabled={showModal}
-              className={`${showModal ? "bg-gray-200": "bg-green-300 hover:bg-green-700"} w-full flex flex-row justify-center mt-5 py-2 px-3 rounded-md`}
+              className={`${showModal ? "bg-gray-200" : "bg-green-300 hover:bg-green-700"} w-full flex flex-row justify-center mt-5 py-2 px-3 rounded-md`}
               type="submit"
-              onClick={handleSubmit}
+              onClick={handleShowOtp}
             >
               <OverlayLoading show={isLoading} />
               <span className="text-sm font-semibold text-white mt-1">Đăng ký</span>
@@ -121,6 +154,15 @@ const RegitserPage:React.FC = () => {
         ) : (
           <div></div>
         )}
+      {isShow && (
+        <OTP
+          email={regitserFormDto.email}
+          onSendOtp={handleSend}
+          title='Xác minh tài khoản'
+          onCancel={handleCancel}
+          onSubmit={handleSubmit}
+        />
+      )}
     </div>
   )
 }

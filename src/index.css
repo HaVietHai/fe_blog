@@ -26,3 +26,70 @@ html, body {
     margin: 0;
     padding: 0;
 }
+
+@keyframes slideInRealtime {
+  from {
+    opacity: 0;
+    transform: translateX(100%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
+
+@keyframes slideOutRealtime {
+  from {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%) translateY(10px);
+  }
+}
+
+.animate-slideInRealtime {
+  animation: slideInRealtime 0.4s ease forwards;
+}
+
+.animate-slideOutRealtime {
+  animation: slideOutRealtime 0.4s ease forwards;
+}
+
+@keyframes fadeInCenter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOutBg {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeOutCenter {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.9); }
+}
+
+.animate-fadeInCenter {
+  animation: fadeInCenter 0.3s ease forwards;
+}
+
+.animate-popIn {
+  animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fadeOutCenter {
+  animation: fadeOutCenter 0.3s ease forwards;
+}
+
+.animate-fadeOutBg {
+  animation: fadeOutBg 0.3s ease forwards;
+}
+

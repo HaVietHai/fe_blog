@@ -6,7 +6,6 @@ import errorHandler from "../../../utils/errorHandle";
 import { useDispatch } from "react-redux";
 import { handleVerifyOtp } from "../../../services/user.service";
 import { setOtpVerified } from "../../../redux/slices/otp.slice";
-import { showNotification } from "../../../utils/helper";
 
 interface IPops {
   length?: number,
@@ -24,7 +23,6 @@ const OTPInput: React.FC<IPops> = ({
   const dispatch = useDispatch()
   const [otp, setOtp] = useState<string[]>(Array(length).fill(""));
   const [disabled, setDisable] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [count, setCount] = useState<number>(30);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -56,8 +54,6 @@ const OTPInput: React.FC<IPops> = ({
       handleSetTimeLimit(30);
     } catch (error) {
       errorHandler(error);
-    } finally {
-      setIsLoading(false);
     }
   }
 
@@ -76,8 +72,6 @@ const OTPInput: React.FC<IPops> = ({
     if (!handleValidate()) return;
 
     try {
-      setIsLoading(true);
-
       const code = otp.join('').toString();
       const data = await handleVerifyOtp({ email: email, randomCode: code })
 
@@ -87,8 +81,6 @@ const OTPInput: React.FC<IPops> = ({
       }
     } catch (error) {
       errorHandler(error);
-    } finally {
-      setIsLoading(false);
     }
   }
 

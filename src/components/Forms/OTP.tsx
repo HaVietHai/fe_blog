@@ -1,0 +1,159 @@
+import type React from "react"
+import { IconLucide } from "../IconLucide"
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useEffect, useRef, useState } from "react";
+import { handleVerifyOtp } from "../../services/user.service";
+import { setOtpVerified } from "../../redux/slices/otp.slice";
+import errorHandler from "../../utils/errorHandle";
+
+interface IPops {
+    length?: number,
+    onChangeOTP?: (otp: string) => void,
+    title: string,
+    email: string,
+    onSendOtp: (e: React.ChangeEvent<HTMLButtonElement>) => void
+    onCancel: (e: React.ChangeEvent<HTMLButtonElement>) => void,
+    onSubmit: () => void
+}
+
+const OTP: React.FC<IPops> = ({
+    length = 5, onSendOtp, onChangeOTP, title, email, onCancel, onSubmit
+}) => {
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
+    const [otp, setOtp] = useState<string[]>(Array(length).fill(""));
+    const [disabled, setDisable] = useState<boolean>(false);
+    const [count, setCount] = useState<number>(30);
+    const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+
+
+    const handleOnChange = (val: string, index: number) => {
+        if (!/^[0-9]?$/.test(val)) return; // Chi nhap so
+        const newOtp = [...otp];
+        newOtp[index] = val
+        setOtp(newOtp);
+
+        if (onChangeOTP) onChangeOTP(newOtp.join(""));
+
+        if (val && index < length - 1) {
+            inputRefs.current[index + 1]?.focus();
+        }
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+        if (e.key === "Backspace" && !otp[index] && index > 0) {
+            inputRefs.current[index - 1]?.focus();
+        }
+    }
+
+    const handleSetTimeLimit = (time: number) => {
+        setCount(time)
+        setDisable(!disabled);
+    }
+
+    const handleValidate = (): boolean => {
+        return true
+    }
+
+    const handleAgainOtp = async (e: React.ChangeEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
+        try {
+            onSendOtp(e);
+            handleSetTimeLimit(30);
+        } catch (error) {
+            errorHandler(error);
+        }
+    }
+
+    const handleSubmit = async (e: React.ChangeEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
+        if (!handleValidate()) return;
+
+        try {
+            const code = otp.join('').toString();
+            const data = await handleVerifyOtp({ email: email, randomCode: code })
+
+            if (data.success) {
+                dispatch(setOtpVerified(true))
+                onSubmit();
+            }
+        } catch (error) {
+            errorHandler(error);
+        }
+    }
+
+    useEffect(() => {
+        if (count == 0) {
+            setDisable(true);
+            return;
+        }
+        setTimeout(() => {
+            setCount(count - 1)
+        }, 1000)
+    }, [count, disabled])
+
+    return (
+        <div className="fixed inset-0 bg-black/60 items-center justify-center z-50 flex flex-col space-y-3">
+            <div className="bg-white rounded-2xl p-6 w-[90%] max-w-[600px] text-white shadow-xl">
+                <h1 className="effect-text-h">{title}</h1>
+                <h4 className="text-sm font-semibold text-gray-400 text-center">Mã OTP</h4>
+                <div className="flex justify-center">
+                    {otp.map((val, index) => (
+                        <input
+                            key={index}
+                            value={val}
+                            maxLength={1}
+                            onKeyDown={(e) => handleKeyDown(e, index)}
+                            onChange={(e) => handleOnChange(e.target.value, index)}
+                            ref={(el) => { inputRefs.current[index] = el }}
+                            inputMode="numeric"
+                            className="h-14 w-15 text-center text-[var(--color-brand-dark)] text-5xl rounded-md border border-gray-300 m-3 focus:ring-1 focus:ring-cyan-600 "
+                        />
+                    ))}
+                </div>
+                <div className="w-auto text-right mb-2">
+                    {disabled && disabled ? (
+                        <div>
+                            <button
+                                type="submit"
+                                onClick={handleAgainOtp}
+                            >
+                                <span
+                                    className="text-sm text-black hover:font-semibold hover:cursor-pointer hover:text-cyan-400"
+                                >
+                                    Gửi lại mã OTP
+                                </span>
+                            </button>
+                        </div>
+                    ) : (
+                        <div>
+                            <span
+                                className="text-sm text-gray-400 hover:cursor-not-allowed"
+                            >Gửi lại mã OTP sau: {count}s</span>
+                        </div>
+                    )}
+                </div>
+                <button
+                    type="submit"
+                    onClick={handleSubmit}
+                    className="w-full mb-2 px-2 py-3 bg-blue-300 rounded-md hover:cursor-pointer hover:bg-blue-700"
+                >
+                    <span className="text-sm font-semibold text-white">Xác nhận</span>
+                </button>
+                <button
+                    onClick={onCancel}
+                    className="flex flex-row justify-center w-full px-2 py-3 bg-green-300 rounded-md hover:cursor-pointer hover:bg-green-700"
+                >
+                    <IconLucide name="ArrowBigLeft" className="w-5 h-5 text-white mr-2" />
+                    <span className="text-sm font-semibold text-white">Hủy thao tác</span>
+                </button>
+            </div>
+        </div>
+    )
+}
+
+export default OTP
