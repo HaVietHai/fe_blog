@@ -13,7 +13,7 @@ import AnimationLoader from "../components/AnimationLoader";
 
 const SCROLL_KEY = "feedScrollY";
 const LAST_VISIT_KEY = "lastFeedVisit";
-const CACHE_DURATION = 3 * 60 * 1000; // 3 phút
+const CACHE_DURATION = 1 * 60 * 1000; // 1 phút
 
 const FeedPage: React.FC = () => {
   const { posts, setPosts } = useFeedContext();
@@ -34,9 +34,9 @@ const FeedPage: React.FC = () => {
   const user = token?.user || {};
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const loadingRef = useRef(false); // 🔒 chặn spam scroll
+  const loadingRef = useRef(false); // chặn spam scroll
 
-  // ✅ Lưu và khôi phục vị trí scroll
+  // Lưu và khôi phục vị trí scroll
   const handleSaveScroll = () => {
     if (containerRef.current)
       sessionStorage.setItem(SCROLL_KEY, String(containerRef.current.scrollTop));
@@ -58,7 +58,7 @@ const FeedPage: React.FC = () => {
     });
   };
 
-  // ✅ Hàm load bài viết
+  // Hàm load bài viết
   const handleLoadPost = async (page: number, append = false) => {
     if (loadingRef.current) return; // chặn gọi song song
     loadingRef.current = true;
@@ -88,7 +88,7 @@ const FeedPage: React.FC = () => {
     }
   };
 
-  // ✅ Infinite scroll
+  // Infinite scroll
   useEffect(() => {
     if (!initialized || !containerRef.current) return;
     const el = containerRef.current;
@@ -113,13 +113,13 @@ const FeedPage: React.FC = () => {
     return () => el.removeEventListener("scroll", onScroll);
   }, [initialized, hasMore, isLoading]);
 
-  // ✅ Load thêm khi page đổi
+  // Load thêm khi page đổi
   useEffect(() => {
     if (!initialized || page === 1) return;
     handleLoadPost(page, true);
   }, [page, initialized]);
 
-  // ✅ Khởi tạo lần đầu
+  // Khởi tạo lần đầu
   useEffect(() => {
     const initFeed = async () => {
       const lastVisit = sessionStorage.getItem(LAST_VISIT_KEY);
@@ -136,7 +136,7 @@ const FeedPage: React.FC = () => {
     initFeed();
   }, []);
 
-  // ✅ Xử lý Post mới
+  // Xử lý Post mới
   const handleChangeForm = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
     setFormPost((prev) => ({ ...prev, [name]: value }));
