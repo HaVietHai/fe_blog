@@ -1,7 +1,7 @@
 // src/hooks/useLikeToggle.ts
 import { useState, useEffect } from 'react';
 import type { IPost, ILikePost } from '../types/post.type';
-import type { IComment } from '../types/comment.type';
+import type { IComment, ILikeComment } from '../types/comment.type';
 import errorHandler from '../utils/errorHandle';
 import { handleLikeOrUnlike } from '../services/post.service';
 
@@ -86,6 +86,7 @@ export const useLikeToggle = (items: (IPost | IComment)[], authUserId: string | 
                 authorId: authUserId,
                 postId: itemId
             };
+
             const isPost = 'title' in likedItem; // Check type
 
             // Gọi API dựa trên trạng thái isCurrentlyLiked đã tính toán ở trên

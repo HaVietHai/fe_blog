@@ -158,10 +158,17 @@ const ProfilePage = () => {
         <span className="text-gray-400 text-sm font-semibold">{user.email}</span>
 
         <div className="w-full h-auto border-t mt-2 border-[var(--color-border-soft)]">
-          <h1 className="font-bold text-lg text-gray-200 mt-2">My posts</h1>
+          <h1 className="font-bold text-lg text-gray-200 mt-2">{posts.length > 0 ? "My posts" : ""}</h1>
           {!isLoading ? (
             <div className="px-3 py-2">
-              <List items={posts} isMe onReload={handleReloadPost} />
+              {posts.length > 0 ? (
+                <List items={posts} isMe onReload={handleReloadPost} />
+              ): (
+                <div className="flex flex-col items-center mt-10">
+                  <span className="text-xl font-bold">Bạn chưa có bất ký bài viết nào!</span>
+                  <span className="text-lg font-semibold">Hãy chia sẻ nên những cảm xúc đầu tiên của bạn.</span>
+                </div>
+              )}
               {hasMore && (
                 <div className="text-center py-4 text-gray-400 text-sm">
                   Đang tải thêm...

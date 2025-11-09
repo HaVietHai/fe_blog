@@ -1,21 +1,45 @@
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { MENU_ITEMS } from "../../../constants/menuItem.constant";
 import { IconLucide } from "../../../components/IconLucide";
 import logoImage from "../../../assets/logo-banner/V.png"
 import { StorageService } from "../../../services/storage.service";
 import { STORAGE_KEY_AUTH_BLOG } from "../../../constants/key.constant";
-import { useState } from "react";
+// THAY ĐỔI: Thêm useRef
+import { useState, useRef } from "react"; 
 import ModalPost from "../Post/View/Modal";
+import LeftModal from "../../../components/LeftModal";
+import { useDispatch } from "react-redux";
+import { setOtpVerified } from "../../../redux/slices/otp.slice";
 
 const SidebarLeft = () => {
 
-    const [showPost, setShowPost] = useState<boolean>(false)
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const [showPost, setShowPost] = useState(false);
+    const [showModalLeft, setShowModalLeft] = useState(false);
+    
+    const [modalRect, setModalRect] = useState(null); 
+    const triggerRef = useRef(null); 
 
     const location = useLocation();
-    const user = StorageService.getItem(STORAGE_KEY_AUTH_BLOG)
+    const user = StorageService.getItem(STORAGE_KEY_AUTH_BLOG);
     const id = user.user.id || user.user._id;
-    const handleOnReload = () =>{
-        console.log("Nothing here!!");   
+    const handleOnReload = () => {
+        console.log("Nothing here!!");
+    }
+
+    const handleOpenModal = () => {
+        if (triggerRef.current) {
+            setModalRect(triggerRef.current.getBoundingClientRect());
+            setShowModalLeft(true);
+        }
+    };
+
+    const handleLogout = () =>{
+        StorageService.clearItem(STORAGE_KEY_AUTH_BLOG);
+        dispatch(setOtpVerified(false));
+        navigate('/login');
     }
 
     return (
@@ -54,7 +78,11 @@ const SidebarLeft = () => {
                     <span className="font-semibold text-lg text-white">Post</span>
                 </button>
             </nav>
+
+            {/* THAY ĐỔI: Gán ref và đổi onClick */}
             <div
+                ref={triggerRef} 
+                onClick={handleOpenModal} 
                 className={`flex flex-row w-full h-auto mt-19 p-2 rounded-full items-center justify-between
                     hover:bg-[var(--color-border-soft)] cursor-pointer`}
             >
@@ -65,12 +93,23 @@ const SidebarLeft = () => {
                 </div>
                 <IconLucide name="MoreHorizontal" className="text-white" />
             </div>
+
             {showPost && (
                 <ModalPost
-                authorId={id}
-                onReload={handleOnReload}
-                onClose={() => setShowPost(false)}
-                name="title"
+                    authorId={id}
+                    onReload={handleOnReload}
+                    onClose={() => setShowPost(false)}
+                    name="title"
+                />
+            )}
+
+            {/* THAY ĐỔI: Truyền props rect và user vào LeftModal */}
+            {showModalLeft && modalRect && (
+                <LeftModal
+                    user={user.user}
+                    rect={modalRect}
+                    onClose={() => setShowModalLeft(false)}
+                    onLogout={handleLogout}
                 />
             )}
         </aside>
