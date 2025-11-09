@@ -107,7 +107,6 @@ const PostDetail = () => {
         if (item instanceof File) {
           formData.append("images", item);
         } else if (typeof item === "string") {
-          // existing image path/URL from server
           formData.append("existingImages", item);
         }
       });
@@ -125,11 +124,16 @@ const PostDetail = () => {
         message: "Đã phản hồi bài đăng này thành công.",
         duration: 3000
       })
+
+      if (postId) {
+        await loadData(postId, 1); // Gọi lại loadData
+        setPage(1); // Reset về trang 1
+      }
+
     } catch (error) {
       errorHandler(error);
     }
   }
-
   useEffect(() => {
     if (postId) {
       loadData(postId, page);
@@ -146,6 +150,7 @@ const PostDetail = () => {
   // Tạo các biến 'isLiked' và 'likeCount' (giữ nguyên)
   const isLiked = authUserId ? (post?.liked || []).includes(authUserId) : false;
   const likeCount = (post?.liked || []).length;
+  const commentCount = comments?.length || 0;
 
   return (
     <div className="relative min-h-screen bg-black text-white w-auto">
@@ -154,8 +159,9 @@ const PostDetail = () => {
       {/* Bài post chi tiết */}
       <div className="flex flex-col p-4 pt-7">
         <div className="flex flex-col space-y-4">
-          <ViewPostDetail post={post} />
+          <ViewPostDetail post={post} commentCount={commentCount}/>
           <Footer
+            countComment={commentCount}
             viewFooter={2}
             countLiked={likeCount}
             isLiked={isLiked}
@@ -191,7 +197,7 @@ const PostDetail = () => {
             )}
             {comments && comments.length !== 0 ? (
               <div className="p-2 md:w-130 w-180 flex flex-row justify-center items-center ml-5">
-                <List items={comments} isComment={true}/>
+                <List items={comments} isComment={true} />
               </div>
             ) : (
               <div className="justify-center items-center flex-row flex">

@@ -2,15 +2,22 @@ import type React from "react"
 import type { IPost } from "../types/post.type"
 import { IconLucide } from "./IconLucide"
 import ImageGrid from "./ImageGrip"
+import { format } from "date-fns" // <-- 1. THÊM IMPORT NÀY
 
 interface IProps {
     post: IPost,
-    images: string[]
+    images?: string[] // Prop 'images' này dường như không được sử dụng?
+    commentCount: number
 }
 
 const ViewPostDetail: React.FC<IProps> = ({
-    post
+    post, commentCount
 }) => {
+
+    const formattedDate = post?.createdAt
+        ? format(new Date(post.createdAt), 'h:mm a · MMM d, yyyy')
+        : ""; 
+
     return (
         <div>
             <div className="flex flex-row justify-between">
@@ -33,8 +40,10 @@ const ViewPostDetail: React.FC<IProps> = ({
             <ImageGrid
                 images={post?.images}
             />
-            <span className="text-[var(--color-text-secondary)]">
-                · Time to now ·· {post?.commentCount == 0 ? "Chưa có bất kỳ comment nào" : post?.commentCount}
+            
+            {/* 3. THAY THẾ DÒNG NÀY */}
+            <span className="text-sm text-[var(--color-text-secondary)] mt-3 block">
+                {formattedDate} · {commentCount} comment
             </span>
         </div>
     )

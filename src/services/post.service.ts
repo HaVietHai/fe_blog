@@ -34,8 +34,8 @@ export const handleLikeOrUnlike = async(data: ILikePost, typeFlag: number):Promi
         if (typeFlag === 2) return await unlikePost({ authorId: authorId, postId: postId });
     }else if (typeFlag ===3 || typeFlag === 4) {
         const commentId = postId;
-        if(typeFlag === 3) return await likeComment({ authorId: authorId, commentId: commentId })
-        if(typeFlag === 4) return await unlikeComment({ authorId: authorId, commentId: commentId })
+        if(typeFlag === 3) return await likeComment({ currentId: authorId, targetId: commentId })
+        if(typeFlag === 4) return await unlikeComment({ currentId: authorId, targetId: commentId })
     }else{
         throw new Error("Invalid typeFlag. Must be 1, 2, 3, or 4.")
     }

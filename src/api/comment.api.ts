@@ -14,11 +14,11 @@ export const removeComment = async(id: string, authorId: string) =>{
 }
 
 export const likeComment = async(data: ILikeComment):Promise<void> =>{
-    const { authorId, commentId } = data
-    return await client.post(`/comment/like/${commentId}/${authorId}`);
+    const { targetId, currentId } = data
+    return await client.post(`/api/v1/comment/like/${targetId}/${currentId}`);
 }
 
 export const unlikeComment = async(data: ILikeComment):Promise<void> =>{
-    const { commentId, authorId } = data
-    return await client.post(`/comment/unlike/${commentId}/${authorId}`)
+    const { targetId, currentId } = data
+    return await client.post(`/api/v1/comment/unlike/${targetId}/${currentId}`)
 }

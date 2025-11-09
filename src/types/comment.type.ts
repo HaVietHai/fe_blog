@@ -15,6 +15,6 @@ export interface ICommentRequestDto{
 }
 
 export interface ILikeComment{
-    commentId: string,
-    authorId: string
+    targetId: string,
+    currentId: string
 }

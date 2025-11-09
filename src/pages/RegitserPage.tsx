@@ -13,8 +13,6 @@ import errorHandler from '../utils/errorHandle'
 import { REGISTER_SUCCESS } from '../constants/message.constant';
 import OTP from '../components/Forms/OTP';
 import { showNotification } from '../utils/helper';
-import { showCenterNotification } from '../utils/centerNotification';
-
 
 const RegitserPage: React.FC = () => {
 
