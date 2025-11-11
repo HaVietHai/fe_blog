@@ -10,6 +10,7 @@ import { handleGetPostOwner } from "../../services/post.service";
 import AnimationLoader from "../../components/AnimationLoader";
 import { handleGetCommentOwner } from "../../services/comment.service";
 import { motion, AnimatePresence } from "framer-motion";
+import type { IComment } from "../../types/comment.type";
 
 const SCROLL_KEY = "profileScrollY";
 
@@ -20,7 +21,7 @@ const ProfilePage = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [posts, setPosts] = useState<IPost[]>([]);
-  const [comments, setComments] = useState<IPost[]>([]);
+  const [comments, setComments] = useState<IComment[]>([]);
   const [tab, setTab] = useState<Tab>("posts"); // Mặc định "posts"
   const [initialized, setInitialized] = useState(false);
 
@@ -90,8 +91,10 @@ const ProfilePage = () => {
       setIsLoading(true);
       try {
         const response = await handleGetCommentOwner(id, page);
+        console.log(response);
+        
         setComments((prev) =>
-          append ? [...prev, ...(response.comments || [])] : response.comments || []
+          append ? [...prev, ...(response || [])] : response || []
         );
         const totalPages = response.pagination?.totalPages || 1;
         setHasMore(page < totalPages);
@@ -124,6 +127,18 @@ const ProfilePage = () => {
     };
     init();
   }, [id, handleGetOwnerPost]);
+
+  // Load khi đổi tab
+  useEffect(() => {
+    if (!initialized) return;
+
+    setPage(1); // reset về page đầu
+    if (tab === "posts") {
+      handleGetOwnerPost(1);
+    } else {
+      handleGetOwnerComments(1);
+    }
+  }, [tab, initialized, handleGetOwnerPost, handleGetOwnerComments]);
 
   // Infinite scroll
   useEffect(() => {
@@ -213,19 +228,19 @@ const ProfilePage = () => {
         {/* Tabs */}
         <div className="flex mt-4 border-b border-gray-700">
           <motion.button
+            style={{ color: "#9ca3af" }}
             onClick={() => { setTab("posts"); setPage(1); }}
-            className={`px-4 py-2 font-semibold ${
-              tab === "posts" ? "border-b-2 border-cyan-400 text-white" : "text-gray-400"
-            }`}
+            className={`px-4 py-2 font-semibold ${tab === "posts" ? "border-b-2 border-cyan-400 text-white" : "text-gray-400"
+              }`}
             whileHover={{ scale: 1.05, color: "#22d3ee" }}
           >
             My posts
           </motion.button>
           <motion.button
+            style={{ color: "#9ca3af" }}
             onClick={() => { setTab("comments"); setPage(1); }}
-            className={`px-4 py-2 font-semibold ${
-              tab === "comments" ? "border-b-2 border-cyan-400 text-white" : "text-gray-400"
-            }`}
+            className={`px-4 py-2 font-semibold ${tab === "comments" ? "border-b-2 border-cyan-400 text-white" : "text-gray-400"
+              }`}
             whileHover={{ scale: 1.05, color: "#22d3ee" }}
           >
             My comments
@@ -252,7 +267,7 @@ const ProfilePage = () => {
                   </div>
                 )
               ) : comments.length > 0 ? (
-                <List items={comments} isMe onReload={handleReload} />
+                <List items={comments} isMe onReload={handleReload} avatar={user.avatar}/>
               ) : (
                 <div className="flex flex-col items-center mt-10">
                   <span className="text-xl font-bold">Bạn chưa có bình luận nào!</span>

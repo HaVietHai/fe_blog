@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import WeatherWidget from "../../../components/WeatherWidget";
 
 const SidebarRight = () => {
   const trends = ["#CôngNghệAI", "#LậpTrình", "#ReactNative", "#Vite", "#fyp"];
@@ -39,6 +40,7 @@ const SidebarRight = () => {
           ))}
         </ul>
       </motion.div>
+      <WeatherWidget/>
     </aside>
   );
 };
