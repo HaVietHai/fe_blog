@@ -5,6 +5,11 @@ export const getCommentByPost = async(postId: string, page: number):Promise<ICom
     return await client.post(`/api/v1/comment/${postId}/${page}`)
 }
 
+export const getCommentOwner = async(authorId: string, page: number):Promise<any> => {
+    const currentId = authorId 
+    return await client.post(`/api/v1/comment/ownerComments/${currentId}/${page}`)
+}
+
 export const createComment = async(postId: string, data: any)=>{
     return await clientMultipart.post(`/api/v1/comment/create/${postId}`,data)
 }

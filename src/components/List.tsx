@@ -23,11 +23,12 @@ interface IProp {
     className?: React.HTMLAttributes<HTMLDivElement> | string | undefined,
     isMe?: boolean;
     onReload?: () => void,
-    isComment?: boolean
+    isComment?: boolean,
+    avatar?: string
 }
 
 const List: React.FC<IProp> = ({
-    items, className, isMe, onReload, isComment
+    items, className, isMe, onReload, isComment, avatar
 }) => {
 
     const [showMenu, setShowMenu] = useState<boolean>(false)
@@ -98,7 +99,7 @@ const List: React.FC<IProp> = ({
                                     <img
                                         onClick={() => navigate(`/infor/${item.authorId?._id}`)}
                                         alt="UserAvatar"
-                                        src={item.authorId?.avatar || item.avatar}
+                                        src={item.authorId?.avatar || item.avatar || avatar}
                                         className="w-12 h-12 rounded-full hover:cursor-pointer"
                                     />
 

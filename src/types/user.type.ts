@@ -56,3 +56,14 @@ export interface User{
     username?: string
     userName?: string
 }
+
+export interface IChangePass{
+    oldPass: string,
+    newPass: string,
+    confirmPass: string
+}
+
+export interface IForgotPass{
+    newPass: string,
+    confirmPass: string
+}

@@ -20,3 +20,11 @@ export const LoginSchema = z.object({
 export const OTPSchema = z.object({
     email: z.email(getErrorMessage(ErrorCode.MAIL_IS_REQUIRED))
 })
+
+export const ForgotSchema = z.object({
+  newPass: z.string().min(1,getErrorMessage(ErrorCode.PASSWORD_IS_REQUIRED)),
+  confirmPass: z.string().min(1, getErrorMessage(ErrorCode.PASSCONFIRM_ISREQUIRED))
+}).refine((data) => data.newPass === data.confirmPass, {
+  error: getErrorMessage(ErrorCode.MATCHED_WITH_PASSWORD),
+  path: ['confirmPass']
+})

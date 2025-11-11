@@ -3,7 +3,7 @@ export interface Notification{
     message: string,
     read: boolean,
     sender: Sender,
-    type: "follow" | "like" | "chat"
+    type: "follow" | "like" | "comment"
 }
 
 export interface Sender{

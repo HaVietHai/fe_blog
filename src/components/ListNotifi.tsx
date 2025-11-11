@@ -1,47 +1,64 @@
-import type React from "react"
-import type { Notification } from "../types/notification.type"
+import type React from "react";
+import type { Notification } from "../types/notification.type";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 interface IProps {
-    items: Notification[],
-    isLoading: boolean
+  items: Notification[];
+  isLoading: boolean;
 }
 
-const ListNotifi: React.FC<IProps> = ({
-    items
-}) => {
-    const navigate = useNavigate();
+const ListNotifi: React.FC<IProps> = ({ items, isLoading }) => {
+  const navigate = useNavigate();
 
+  if (isLoading)
+    return <div className="text-center py-5 text-lg text-gray-400">Đang tải thông báo...</div>;
+
+  if (!items || items.length === 0)
     return (
-        <div>
-            {items ? (
-                <div className="flex flex-col ">
-                    {items.map((notification) => (
-                        <div
-                            key={notification._id}
-                            className="px-4 py-2 hover:rounded-full hover:transition-all hover:cursor-pointer bg-[var(--color-brand-dark)] w-full flex flex-row flex-1 mb-2"
-                            onClick={() => navigate(`/infor/${notification.sender._id}`)}
-                        >
-                            <img src={notification.sender.avatar} className="w-15 h-15 rounded-full self-center" />
-                            <div className="flex flex-col ml-3">
-                                <span className="text-xl font-semibold">{notification.message}</span>
-                                {notification.type === "follow" && (
-                                    <span className="text-lg">{notification.sender.username} đang follow bạn.</span>
-                                )}
-                                {notification.type === 'like' && (
-                                    <span className="text-lg">{notification.sender.username} đã trao tặng cho bạn 1 tim.</span>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <span className="text-3xl font-bold text-center self-center break-all">
-                    Bạn chưa có bất kỳ thông báo nào! Cho tới hiện tại
-                </span>
-            )}
-        </div>
-    )
-}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="text-2xl font-semibold text-center py-10 text-gray-400"
+      >
+        Bạn chưa có bất kỳ thông báo nào!
+      </motion.div>
+    );
 
-export default ListNotifi
+  return (
+    <motion.div
+      layout
+      className="flex flex-col space-y-2"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      {items.map((notification, index) => (
+        <motion.div
+          key={notification._id}
+          layout
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.05, duration: 0.25 }}
+          whileHover={{ scale: 1.02, backgroundColor: "rgba(0,0,0,0.2)" }}
+          className="px-4 py-3 rounded-xl bg-[var(--color-brand-dark)] cursor-pointer flex flex-row items-center space-x-3"
+          onClick={() => navigate(`/infor/${notification.sender._id}`)}
+        >
+          <img
+            src={notification.sender.avatar}
+            className="w-12 h-12 rounded-full border border-cyan-300"
+          />
+          <div className="flex flex-col">
+            <span className="text-lg font-semibold text-white">
+              {notification.sender.username}
+            </span>
+            <span className="text-sm text-gray-300">{notification.message}</span>
+          </div>
+        </motion.div>
+      ))}
+    </motion.div>
+  );
+};
+
+export default ListNotifi;

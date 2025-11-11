@@ -13,7 +13,7 @@ import AnimationLoader from "../components/AnimationLoader";
 
 const SCROLL_KEY = "feedScrollY";
 const LAST_VISIT_KEY = "lastFeedVisit";
-const CACHE_DURATION = 1 * 60 * 1000; // 1 phút
+const CACHE_DURATION = 5 * 1000; // 5s
 
 const FeedPage: React.FC = () => {
   const { posts, setPosts } = useFeedContext();

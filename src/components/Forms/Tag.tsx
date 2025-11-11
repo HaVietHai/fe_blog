@@ -1,86 +1,101 @@
-import type React from 'react'
-import { IconLucide } from '../IconLucide'
-import { useRef } from 'react';
+import React, { useRef } from "react";
+import { motion } from "framer-motion";
+import { IconLucide } from "../IconLucide";
 
 interface Props {
-    onFileSelect?: (files: FileList | null) => void,
-    onGIF?: () => void,
-    onEmoji?: () => void,
-    onHastag?: () => void
+  onFileSelect?: (files: FileList | null) => void;
+  onGIF?: () => void;
+  onEmoji?: () => void;
+  onHastag?: () => void;
 }
 
 const Tag: React.FC<Props> = ({
-    onFileSelect, onEmoji, onGIF, onHastag
+  onFileSelect,
+  onEmoji,
+  onGIF,
+  onHastag,
 }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // 1. Tạo một ref để tham chiếu đến input file ẩn
-    const fileInputRef = useRef<HTMLInputElement>(null);
+  const handleMediaClick = () => fileInputRef.current?.click();
 
-    // 2. Hàm xử lý khi bấm nút Media
-    const handleMediaClick = () => {
-        // Kích hoạt sự kiện click của input file ẩn
-        fileInputRef.current?.click();
-    };
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (onFileSelect) onFileSelect(event.target.files);
+    event.target.value = "";
+  };
 
-    // 3. Hàm xử lý khi người dùng chọn file
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // Gọi callback prop và truyền danh sách file đã chọn lên component cha
-        if (onFileSelect) {
-            onFileSelect(event.target.files);
-        }
-        // Reset giá trị input để có thể chọn lại cùng file
-        if (event.target) {
-            event.target.value = '';
-        }
-    };
+  const createParticles = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const button = e.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const particleCount = 8;
 
-    return (
-        <div className="flex flex-row mt-1">
-            <button
-                onClick={handleMediaClick}
-                title="Media"
-                className="hover:cursor-pointer"
-                type="button"
-            >
-                <IconLucide name="Image" className="w-5 h-5 text-[var(--color-brand-cyan)] ml-1" />
-            </button>
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement("span");
+      particle.className = "absolute bg-cyan-400 rounded-full pointer-events-none";
+      const size = Math.random() * 6 + 4;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.left = `${e.clientX - rect.left - size / 2}px`;
+      particle.style.top = `${e.clientY - rect.top - size / 2}px`;
+      particle.style.opacity = "0.9";
+      particle.style.transition = "transform 0.6s ease, opacity 0.6s ease";
+      button.appendChild(particle);
 
-            {/* Input file ẩn */}
-            <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                accept="image/*" // Chỉ chấp nhận file ảnh
-                multiple // Cho phép chọn nhiều ảnh
-                className="hidden" // Ẩn input này đi
-            />
+      const xMove = (Math.random() - 0.5) * 60;
+      const yMove = (Math.random() - 0.5) * 60;
 
-            <button
-                onClick={onGIF}
-                title="GIF"
-                className="hover:cursor-pointer"
-                type="button"
-            >
-                <IconLucide name="SquareSigma" className="w-5 h-5 text-[var(--color-brand-cyan)] ml-3" />
-            </button>
-            <button
-                onClick={onEmoji}
-                title="Emoji"
-                className="hover:cursor-pointer"
-                type="button"
-            >
-                <IconLucide name="Smile" className="w-5 h-5 text-[var(--color-brand-cyan)] ml-3" />
-            </button>
-            <button
-                onClick={onHastag}
-                title="Hastag"
-                className="hover:cursor-pointer"
-                type="button"
-            >
-                <IconLucide name="Hash" className="w-5 h-5 text-[var(--color-brand-cyan)] ml-3" />
-            </button>
-        </div>
-    )
-}
+      requestAnimationFrame(() => {
+        particle.style.transform = `translate(${xMove}px, ${yMove}px) scale(0)`;
+        particle.style.opacity = "0";
+      });
 
-export default Tag
+      setTimeout(() => particle.remove(), 600);
+    }
+  };
+
+  const icons = [
+    { name: "Image", title: "Media", onClick: handleMediaClick },
+    { name: "SquareSigma", title: "GIF", onClick: onGIF },
+    { name: "Smile", title: "Emoji", onClick: onEmoji },
+    { name: "Hash", title: "Hashtag", onClick: onHastag },
+  ];
+
+  return (
+    <div className="flex flex-row mt-1 relative">
+      {icons.map((icon, index) => (
+        <motion.button
+          key={index}
+          title={icon.title}
+          type="button"
+          onClick={(e) => {
+            createParticles(e);
+            icon.onClick?.();
+          }}
+          whileHover={{
+            scale: 1.2,
+            boxShadow: "0 0 10px rgba(34,211,238,0.6)",
+          }}
+          transition={{ type: "spring", stiffness: 300, damping: 15 }}
+          className="relative flex items-center justify-center w-8 h-8 ml-2 rounded-full hover:cursor-pointer"
+        >
+          <IconLucide
+            name={icon.name}
+            className="w-5 h-5 text-[var(--color-brand-cyan)]"
+          />
+        </motion.button>
+      ))}
+
+      {/* hidden input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept="image/*"
+        multiple
+        className="hidden"
+      />
+    </div>
+  );
+};
+
+export default Tag;
